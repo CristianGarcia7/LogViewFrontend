@@ -31,30 +31,31 @@
    Search
    ---------------------------------------------------------- */
 .projects-search {
-  background-color: var(--level-3);       /* #131313 */
-  color: var(--level-1-text);            /* #f5f5f5 */
-  border: 1px solid var(--stroke-default-shadow); /* #131313 */
-  border-radius: var(--radius-8);         /* inputs */
-  padding: var(--input-py-md) var(--input-px-md); /* 12px 16px */
-  font: var(--font-body-regular);         /* 500 16px/18px Mulish */
+  background-color: var(--level-3);       /* --level-3 */
+  color: var(--level-1-text);            /* --level-1-text */
+  border: 1px solid var(--stroke-default-shadow); /* --stroke-default-shadow */
+  border-radius: var(--radius-8);         /* --radius-8 */
+  padding: var(--input-py-md) var(--input-px-md); /* --input-py-md --input-px-md */
+  font: var(--font-body-regular);         /* --font-body-regular */
+  font-family: var(--font-family);       /* --font-family */
   width: 320px;
   max-width: 100%;
   transition:
-    border-color var(--duration-standard) var(--ease-ui),
-    background-color var(--duration-slow) var(--ease-premium);
+    border-color var(--duration-standard) var(--ease-ui),        /* --duration-standard --ease-ui */
+    background-color var(--duration-slow) var(--ease-premium);   /* --duration-slow --ease-premium */
 }
 
 .projects-search::placeholder {
-  color: var(--level-4-text);            /* #6e6e6e */
+  color: var(--level-4-text);            /* --level-4-text */
 }
 
 .projects-search:hover {
-  border-color: var(--stroke-default-light); /* #dcdcdc */
+  border-color: var(--stroke-default-light); /* --stroke-default-light */
 }
 
 .projects-search:focus {
-  border-color: var(--op-blue-600);       /* primary CTA */
-  background-color: var(--level-4);       /* #191919 */
+  border-color: var(--op-blue-600);       /* --op-blue-600 */
+  background-color: var(--level-4);       /* --level-4 */
   outline: none;
 }
 
@@ -68,37 +69,41 @@
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--gap-16);                     /* gap-elements */
+  gap: var(--gutter);                     /* --gutter: 24px */
 }
 
 /* ----------------------------------------------------------
    Project card
    ---------------------------------------------------------- */
 .project-card {
-  background-color: var(--level-2);       /* card bg */
-  border: 1px solid var(--white-5);       /* subtle outline */
-  border-radius: var(--radius-12);        /* cards/containers */
-  padding: var(--card-p-md);             /* 24px */
+  background-color: var(--level-2);       /* --level-2: card bg */
+  border: 1px solid var(--white-5);       /* --white-5: subtle outline */
+  border-radius: var(--radius-12);        /* --radius-12: cards/containers */
+  padding: var(--card-p-md);             /* --card-p-md: 24px */
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: var(--card-gap-md);               /* 8px */
+  gap: var(--card-gap-md);               /* --card-gap-md: 8px */
   cursor: pointer;
-  /* content transition */
+  /* Shine Doctrine — Layer 1: bg/glow, Layer 2: content + lift */
   transition:
-    border-color var(--duration-standard) var(--ease-ui),
-    background-color var(--duration-slow) var(--ease-premium),
-    transform var(--duration-fast) var(--ease-ui);
+    border-color var(--duration-standard) var(--ease-ui),        /* --duration-standard --ease-ui */
+    background-color var(--duration-slow) var(--ease-premium),   /* --duration-slow --ease-premium */
+    box-shadow var(--duration-slow) var(--ease-premium),         /* --duration-slow --ease-premium */
+    transform var(--duration-standard) var(--ease-ui);           /* --duration-standard --ease-ui */
 }
 
 .project-card:hover {
-  border-color: var(--stroke-hover-light);   /* #ffffff */
-  background-color: var(--level-3);          /* #131313 — Shine: bg slow + premium */
+  border-color: var(--stroke-default-light);    /* --stroke-default-light: #dcdcdc */
+  background-color: var(--level-3);             /* --level-3: Shine bg slow+premium */
+  box-shadow: 0 8px 24px var(--black-15);       /* --black-15: subtle lift shadow */
+  transform: translateY(-4px);                  /* micro-lift per motion spec */
 }
 
 .project-card:active {
-  transform: scale(0.99);
-  background-color: var(--level-4);          /* #191919 */
+  transform: translateY(-2px) scale(0.99);
+  background-color: var(--level-4);             /* --level-4: #191919 */
+  box-shadow: 0 2px 8px var(--black-15);
 }
 
 .project-card__name {
@@ -144,5 +149,6 @@
   .project-card,
   .projects-search {
     transition: none;
+    transform: none !important;
   }
 }

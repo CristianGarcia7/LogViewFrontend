@@ -88,37 +88,42 @@
    Error message
    ---------------------------------------------------------- */
 .login-form__error {
-  font: var(--font-body-small);            /* 400 14px/16px Mulish */
-  color: #f87171;                          /* error red — no token defined in spec */
-  padding: var(--gap-8) var(--input-px-md);
-  background-color: rgba(248, 113, 113, 0.1);
-  border-radius: var(--radius-6);
-  border-left: 2px solid #f87171;
+  font: var(--font-body-small);            /* --font-body-small */
+  color: var(--semantic-error-text);       /* --semantic-error-text */
+  padding: var(--gap-8) var(--input-px-md); /* --gap-8 --input-px-md */
+  background-color: var(--semantic-error-bg); /* --semantic-error-bg */
+  border-radius: var(--radius-6);           /* --radius-6 */
+  border-left: 2px solid var(--semantic-error-border); /* --semantic-error-border */
 }
 
 /* ----------------------------------------------------------
-   Submit button
+   Submit button — Shine Doctrine primary CTA
    ---------------------------------------------------------- */
 .login-form__submit {
-  padding: var(--btn-py-md) var(--btn-px-md); /* 16px 24px */
-  background-color: var(--btn-primary-default); /* op-blue-600 */
-  color: var(--btn-primary-text);              /* #ffffff */
-  border-radius: var(--radius-8);              /* inputs/small buttons */
-  font: var(--font-cta-primary-bold);          /* 700 16px/18px Mulish */
+  padding: var(--btn-py-md) var(--btn-px-md);  /* --btn-py-md: 16px, --btn-px-md: 24px */
+  background-color: var(--btn-primary-default); /* --btn-primary-default: op-blue-600 */
+  color: var(--btn-primary-text);              /* --btn-primary-text: #ffffff */
+  border-radius: var(--radius-8);              /* --radius-8 */
+  font: var(--font-cta-primary-bold);          /* --font-cta-primary-bold: 700 16px/18px */
+  font-family: var(--font-family);
   width: 100%;
-  margin-top: var(--gap-8);
+  margin-top: var(--gap-8);                    /* --gap-8 */
+  /* Shine Doctrine — Layer 1: bg/glow slow+premium, Layer 2: transform fast+ui */
   transition:
-    background-color var(--duration-standard) var(--ease-ui),
-    transform var(--duration-fast) var(--ease-ui);
+    background-color var(--duration-slow) var(--ease-premium),  /* --duration-slow --ease-premium */
+    box-shadow var(--duration-slow) var(--ease-premium),        /* --duration-slow --ease-premium */
+    transform var(--duration-fast) var(--ease-ui);              /* --duration-fast --ease-ui */
 }
 
 .login-form__submit:hover:not(:disabled) {
-  background-color: var(--btn-primary-hover); /* op-blue-700 */
+  background-color: var(--btn-primary-hover);  /* --btn-primary-hover: op-blue-700 */
+  box-shadow: 0 0 0 3px var(--op-blue-600-15); /* --op-blue-600-15: glow halo */
 }
 
 .login-form__submit:active:not(:disabled) {
-  background-color: var(--btn-primary-active); /* op-blue-900 */
+  background-color: var(--btn-primary-active); /* --btn-primary-active: op-blue-900 */
   transform: scale(0.99);
+  box-shadow: none;
 }
 
 .login-form__submit:disabled {
@@ -131,5 +136,6 @@
   .login-form__input,
   .login-form__submit {
     transition: none;
+    box-shadow: none !important;
   }
 }

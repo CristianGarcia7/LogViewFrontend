@@ -180,38 +180,48 @@
 }
 
 /* ----------------------------------------------------------
-   Refresh button
+   Refresh button — Shine Doctrine primary CTA
    ---------------------------------------------------------- */
 .logview-refresh {
-  padding: var(--btn-py-sm) var(--btn-px-md); /* 8px 24px */
-  background-color: var(--btn-primary-default); /* op-blue-600 */
-  color: var(--btn-primary-text);              /* #ffffff */
-  border-radius: var(--radius-8);
-  font: var(--font-cta-primary-medium);        /* 500 16px/18px Mulish */
+  padding: var(--btn-py-sm) var(--btn-px-md);  /* --btn-py-sm: 8px, --btn-px-md: 24px */
+  background-color: var(--btn-primary-default); /* --btn-primary-default: op-blue-600 */
+  color: var(--btn-primary-text);              /* --btn-primary-text: #ffffff */
+  border-radius: var(--radius-8);              /* --radius-8 */
+  font: var(--font-cta-primary-medium);        /* --font-cta-primary-medium: 500 16px/18px */
+  font-family: var(--font-family);
+  /* Shine Doctrine — Layer 1: bg/glow slow+premium, Layer 2: transform fast+ui */
   transition:
-    background-color var(--duration-standard) var(--ease-ui),
-    transform var(--duration-fast) var(--ease-ui);
+    background-color var(--duration-slow) var(--ease-premium),  /* --duration-slow --ease-premium */
+    box-shadow var(--duration-slow) var(--ease-premium),        /* --duration-slow --ease-premium */
+    transform var(--duration-fast) var(--ease-ui);              /* --duration-fast --ease-ui */
 }
 
 .logview-refresh:hover {
-  background-color: var(--btn-primary-hover); /* op-blue-700 */
+  background-color: var(--btn-primary-hover);  /* --btn-primary-hover: op-blue-700 */
+  box-shadow: 0 0 0 3px var(--op-blue-600-15); /* --op-blue-600-15: glow halo */
 }
 
 .logview-refresh:active {
-  background-color: var(--btn-primary-active); /* op-blue-900 */
+  background-color: var(--btn-primary-active); /* --btn-primary-active: op-blue-900 */
   transform: scale(0.98);
+  box-shadow: none;
+}
+
+.logview-refresh:focus-visible {
+  outline: 2px solid var(--op-blue-600);       /* --op-blue-600 */
+  outline-offset: 2px;
 }
 
 /* ----------------------------------------------------------
    Truncated banner
    ---------------------------------------------------------- */
 .logview-truncated-banner {
-  background-color: rgba(251, 191, 36, 0.1);   /* amber tint */
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  border-radius: var(--radius-8);
-  padding: var(--gap-8) var(--gap-16);
-  font: var(--font-body-small);                /* 400 14px/16px Mulish */
-  color: #fbbf24;                              /* amber */
+  background-color: var(--semantic-warn-bg);    /* --semantic-warn-bg */
+  border: 1px solid var(--semantic-warn-border); /* --semantic-warn-border */
+  border-radius: var(--radius-8);               /* --radius-8 */
+  padding: var(--gap-8) var(--gap-16);          /* --gap-8 --gap-16 */
+  font: var(--font-body-small);                /* --font-body-small */
+  color: var(--semantic-warn-text);            /* --semantic-warn-text */
 }
 
 /* ----------------------------------------------------------
@@ -305,28 +315,28 @@
 }
 
 .badge--ok {
-  background-color: rgba(52, 211, 153, 0.15);   /* green tint */
-  color: #34d399;
+  background-color: var(--semantic-ok-bg);      /* --semantic-ok-bg */
+  color: var(--semantic-ok-text);               /* --semantic-ok-text */
 }
 
 .badge--warn {
-  background-color: rgba(251, 191, 36, 0.15);   /* amber tint */
-  color: #fbbf24;
+  background-color: var(--semantic-warn-bg);    /* --semantic-warn-bg */
+  color: var(--semantic-warn-text);             /* --semantic-warn-text */
 }
 
 .badge--error {
-  background-color: rgba(248, 113, 113, 0.15);  /* red tint */
-  color: #f87171;
+  background-color: var(--semantic-error-bg);   /* --semantic-error-bg */
+  color: var(--semantic-error-text);            /* --semantic-error-text */
 }
 
 .badge--info {
-  background-color: var(--op-blue-600-15);      /* op-blue-600 at 15% */
-  color: var(--op-blue-400);                    /* #97b1f9 */
+  background-color: var(--op-blue-600-15);      /* --op-blue-600-15 */
+  color: var(--op-blue-400);                    /* --op-blue-400 */
 }
 
 .badge--neutral {
-  background-color: var(--white-5);             /* rgba(255,255,255,0.05) */
-  color: var(--level-3-text);                   /* #8c8c8c */
+  background-color: var(--white-5);             /* --white-5 */
+  color: var(--level-3-text);                   /* --level-3-text */
 }
 
 /* ----------------------------------------------------------
@@ -357,5 +367,6 @@
   .filter-input,
   .logview-refresh {
     transition: none;
+    box-shadow: none !important;
   }
 }
