@@ -1,0 +1,970 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/access": {
+      "post": {
+        "description": "Creates a UserProjectAccess record allowing the specified user to read logs for the specified project. Admin-only. The user role is never client-settable — access is project-scoped, not role-elevating. Idempotent: granting access to a user who already has access is a no-op.",
+        "operationId": "AccessController_grantAccess",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManageAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Access granted — UserProjectAccess record created"
+          },
+          "400": {
+            "description": "Validation error — userId or projectId missing/not a valid UUID"
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Admin role required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Grant a user access to a project",
+        "tags": [
+          "access"
+        ]
+      },
+      "delete": {
+        "description": "Deletes the UserProjectAccess record for the given (userId, projectId) pair. Admin-only. Returns 204 whether or not the record existed (idempotent delete).",
+        "operationId": "AccessController_revokeAccess",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManageAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Access revoked (or was already absent)"
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Admin role required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Revoke a user's access to a project",
+        "tags": [
+          "access"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "description": "Creates a user account with the given email, password, and role. Password is hashed with bcrypt (cost 12) — never stored in plaintext. Returns a safe user DTO (no passwordHash). Returns 409 if the email is already registered.",
+        "operationId": "UsersController_createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created — safe DTO (no passwordHash)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Admin role required"
+          },
+          "409": {
+            "description": "Email already registered"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new user (admin-only)",
+        "tags": [
+          "users"
+        ]
+      },
+      "get": {
+        "description": "Returns a paginated list of users. Passwords are never included in the response. Default page size: 20.",
+        "operationId": "UsersController_listUsers",
+        "parameters": [
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 20
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated user list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Admin role required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all users (admin-only, paginated)",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Validates credentials against the bcrypt-hashed password. Returns a signed JWT access token and an opaque refresh token on success. Rate-limited to 5 attempts per minute per IP; the 429 fires before bcrypt runs (brute-force protection). Both wrong-password and unknown-email return 401 with the same message to prevent user enumeration.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credentials valid — returns accessToken and refreshToken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokensResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error — email or password missing/invalid"
+          },
+          "401": {
+            "description": "Invalid credentials (wrong password or unknown email)"
+          },
+          "429": {
+            "description": "Rate limit exceeded — too many login attempts"
+          }
+        },
+        "summary": "Authenticate with email and password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "description": "Accepts an opaque refresh token. Validates it (not revoked, not expired), revokes the old token, and returns a new access + refresh pair. REUSE DETECTION: if the presented token was already revoked, all of that user's refresh tokens are immediately revoked (theft response) and 401 is returned. Rate-limited to 10 attempts per minute.",
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token rotated — new access and refresh token pair",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokensResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error — refreshToken missing or not a string"
+          },
+          "401": {
+            "description": "Invalid, expired, or revoked refresh token"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          }
+        },
+        "summary": "Rotate a refresh token and obtain a new token pair",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Revokes the given refresh token. The short-lived access token is left to expire naturally. Idempotent: calling with an unknown token is a no-op (returns 204).",
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Refresh token revoked"
+          },
+          "400": {
+            "description": "Validation error — refreshToken missing"
+          }
+        },
+        "summary": "Revoke a refresh token (logout)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "description": "Returns the user extracted from the JWT payload. Requires a valid Bearer token in the Authorization header.",
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user — id, email, role"
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Return the currently authenticated user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/projects": {
+      "get": {
+        "description": "Returns projects the requesting user is authorized to access. Admins see all projects; viewers see only projects they were explicitly granted access to via POST /access. Supports optional substring search on name/domain and offset pagination. Response NEVER includes instanceId, accessLogPath, errorLogPath, or hestiaUser.",
+        "operationId": "ProjectsController_listProjects",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Optional substring filter applied to project name and domain. Case-insensitive.",
+            "schema": {
+              "example": "example.com",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based). Default: 1.",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Number of results per page. Range: 1..100. Default: 20.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project list returned — filtered by the caller's access level",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectListResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List accessible projects with optional search and pagination",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "description": "Returns the project with the given UUID. AccessGuard validates that the requesting user has a UserProjectAccess record for this project (or is admin). Response NEVER includes instanceId, accessLogPath, errorLogPath, or hestiaUser.",
+        "operationId": "ProjectsController_getProjectById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Project UUID",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectListItemDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Forbidden — caller has no access to this project"
+          },
+          "404": {
+            "description": "Project not found in catalog"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a project by ID",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/sync": {
+      "post": {
+        "description": "Discovers all SSM-managed instances with Hestia installed and status Online. For each instance, runs v-list-web-domains via SSM and upserts the resulting sites into the projects catalog. Validates all domain/path values before persisting — invalid entries are rejected and counted. Returns a summary of instances scanned and records created/updated/rejected.",
+        "operationId": "ProjectsController_syncProjects",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Sync completed — summary of instances and records processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncResultDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Admin role required"
+          },
+          "503": {
+            "description": "SSM instance unreachable or AWS error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Sync domain catalog from all Online Hestia instances (admin only)",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/logs": {
+      "get": {
+        "description": "Validates project access, then sends a bounded tail command to the project's EC2 instance via AWS SSM. Polls GetCommandInvocation until the command reaches a terminal state. ALL filtering (text search, status code, log level) happens in Node — the shell command contains only a bounded tail. SSM calls are expensive — endpoint is throttled to 10 requests per minute per IP. Never returns instanceId, log paths, or any internal routing data. The byte cap (~23 KB) limits output; truncated=true signals a clip.",
+        "operationId": "LogsController_getLogs",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "description": "UUID of the project whose logs to read. Must match a project the user can access.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          },
+          {
+            "name": "logType",
+            "required": true,
+            "in": "query",
+            "description": "Type of log to read. \"access\" reads the nginx/apache access log; \"error\" reads the error log.",
+            "schema": {
+              "example": "access",
+              "type": "string",
+              "enum": [
+                "access",
+                "error"
+              ]
+            }
+          },
+          {
+            "name": "lastLines",
+            "required": false,
+            "in": "query",
+            "description": "Number of log lines to fetch from the end of the file. Range: 1..10000. Default: 200.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 200,
+              "example": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "text",
+            "required": false,
+            "in": "query",
+            "description": "Plain-text substring filter applied in Node after the log is fetched. No regex, no shell.",
+            "schema": {
+              "example": "500",
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusCode",
+            "required": false,
+            "in": "query",
+            "description": "HTTP status code filter for access logs only. Accepts exact codes (\"404\") or range patterns (\"4xx\", \"5xx\"). Ignored for error logs.",
+            "schema": {
+              "example": "5xx",
+              "type": "string"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Log level filter for error logs only. Accepted values: error, warn, notice, info. Ignored for access logs.",
+            "schema": {
+              "example": "error",
+              "type": "string",
+              "enum": [
+                "error",
+                "warn",
+                "notice",
+                "info"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log lines returned — array may be empty if no lines match the filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error — invalid projectId, logType, lastLines, statusCode, or level"
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Forbidden — caller has no access to this project"
+          },
+          "404": {
+            "description": "Project not found in catalog"
+          },
+          "502": {
+            "description": "SSM command failed on the instance (non-zero exit or terminal Failed/TimedOut)"
+          },
+          "503": {
+            "description": "Instance unreachable — offline, SSM agent not installed, or InvalidInstanceId"
+          },
+          "504": {
+            "description": "Log read timed out — SSM command did not complete within the poll window"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Read log lines for a project (access or error log)",
+        "tags": [
+          "logs"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "LogView API",
+    "description": "Log viewer for Hestia-hosted sites via AWS SSM. All log routing (instanceId, log paths) is resolved server-side from the projects catalog — clients supply only projectId and filter parameters.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "ManageAccessDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "UUID of the user to grant/revoke access for"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "UUID of the project to grant/revoke access for"
+          }
+        },
+        "required": [
+          "userId",
+          "projectId"
+        ]
+      },
+      "CreateUserRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "newuser@example.com",
+            "description": "Valid email address — must be unique in the system"
+          },
+          "password": {
+            "type": "string",
+            "example": "SecurePass123!",
+            "description": "Password — minimum 8 characters",
+            "minLength": 8
+          },
+          "role": {
+            "type": "string",
+            "example": "viewer",
+            "description": "User role",
+            "enum": [
+              "admin",
+              "viewer"
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "User UUID"
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "Email address"
+          },
+          "role": {
+            "type": "string",
+            "example": "viewer",
+            "description": "User role",
+            "enum": [
+              "admin",
+              "viewer"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Account creation timestamp"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UserListResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserResponseDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 42,
+            "description": "Total number of users"
+          },
+          "skip": {
+            "type": "number",
+            "example": 0,
+            "description": "Pagination offset"
+          },
+          "take": {
+            "type": "number",
+            "example": 20,
+            "description": "Page size"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "skip",
+          "take"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "dev@flare.com",
+            "description": "Registered email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "supersecret",
+            "description": "Account password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AuthTokensResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "Short-lived JWT access token — include as Bearer in subsequent requests"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "dGhpcyBpcyBhIHJhbmRvbSBiYXNlNjR1cmwgdG9rZW4...",
+            "description": "Opaque refresh token — use to obtain a new access token when the current one expires"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "dGhpcyBpcyBhIHJhbmRvbSBiYXNlNjR1cmwgdG9rZW4...",
+            "description": "The opaque refresh token received at login or previous refresh"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "ProjectListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "Project UUID — use as projectId in GET /logs"
+          },
+          "name": {
+            "type": "string",
+            "example": "example.com",
+            "description": "Display name of the project (matches the site domain)"
+          },
+          "domain": {
+            "type": "string",
+            "example": "example.com",
+            "description": "Primary domain of the Hestia-hosted site"
+          },
+          "sourceType": {
+            "type": "string",
+            "example": "hestia-ssm",
+            "description": "Source type. Always \"hestia-ssm\" in this release."
+          },
+          "lastSyncedAt": {
+            "type": "object",
+            "example": "2026-06-26T10:00:00.000Z",
+            "description": "When this project's catalog was last synced from the instance. Null if never synced.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "domain",
+          "sourceType"
+        ]
+      },
+      "ProjectListResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Array of projects the requesting user can access",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectListItemDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 42,
+            "description": "Total number of matching projects (before pagination)"
+          },
+          "page": {
+            "type": "number",
+            "example": 1,
+            "description": "Current page number (1-based)"
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 20,
+            "description": "Number of results per page"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ]
+      },
+      "SyncResultDto": {
+        "type": "object",
+        "properties": {
+          "instancesScanned": {
+            "type": "number",
+            "example": 3,
+            "description": "Number of SSM-managed Hestia instances scanned"
+          },
+          "instancesSkipped": {
+            "type": "number",
+            "example": 0,
+            "description": "Instances skipped (not Online, no Hestia, or SSM command failed)"
+          },
+          "synced": {
+            "type": "number",
+            "example": 12,
+            "description": "Total domains processed (created + updated)"
+          },
+          "created": {
+            "type": "number",
+            "example": 5,
+            "description": "New project records inserted"
+          },
+          "updated": {
+            "type": "number",
+            "example": 7,
+            "description": "Existing project records updated"
+          },
+          "rejected": {
+            "type": "number",
+            "example": 0,
+            "description": "Domains rejected due to invalid format or path validation failure"
+          }
+        },
+        "required": [
+          "instancesScanned",
+          "instancesSkipped",
+          "synced",
+          "created",
+          "updated",
+          "rejected"
+        ]
+      },
+      "LogEntryDto": {
+        "type": "object",
+        "properties": {
+          "raw": {
+            "type": "string",
+            "example": "127.0.0.1 - - [26/Jun/2026:10:00:00 +0000] \"GET /api/health HTTP/1.1\" 200 42",
+            "description": "Raw unparsed log line as returned by the instance"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2026-06-26T10:00:00.000Z",
+            "description": "ISO-8601 timestamp parsed from the log entry, when available"
+          },
+          "method": {
+            "type": "string",
+            "example": "GET",
+            "description": "HTTP method (access logs only)"
+          },
+          "path": {
+            "type": "string",
+            "example": "/api/projects",
+            "description": "Request path (access logs only)"
+          },
+          "status": {
+            "type": "number",
+            "example": 200,
+            "description": "HTTP status code (access logs only)"
+          },
+          "level": {
+            "type": "string",
+            "example": "error",
+            "description": "Log severity level (error logs only): error | warn | notice | info"
+          },
+          "message": {
+            "type": "string",
+            "example": "PHP Fatal error: Allowed memory size exhausted",
+            "description": "Parsed message text (error logs only)"
+          }
+        },
+        "required": [
+          "raw"
+        ]
+      },
+      "LogsResponseDto": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "description": "Array of parsed log line objects. May be empty if no lines match the filters.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogEntryDto"
+            }
+          },
+          "truncated": {
+            "type": "boolean",
+            "example": false,
+            "description": "True when the on-box byte cap (~23 KB) clipped the output before all requested lines were returned."
+          },
+          "fetchedAt": {
+            "type": "string",
+            "example": "2026-06-26T10:00:00.000Z",
+            "description": "ISO-8601 timestamp of when the SSM command completed on the instance"
+          },
+          "source": {
+            "type": "string",
+            "example": "hestia-ssm",
+            "description": "Identifies the adapter that fetched the logs. Always \"hestia-ssm\" in this release."
+          }
+        },
+        "required": [
+          "lines",
+          "truncated",
+          "fetchedAt",
+          "source"
+        ]
+      }
+    }
+  }
+}
