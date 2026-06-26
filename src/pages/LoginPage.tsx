@@ -1,6 +1,5 @@
 import { type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login as loginApi } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
@@ -19,8 +18,7 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const data = await loginApi({ email, password });
-      login(data.accessToken, data.user);
+      await login(email, password);
       navigate('/projects', { replace: true });
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;

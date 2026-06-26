@@ -6,30 +6,34 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { me } from '../api/auth';
-import { TOKEN_KEY } from '../api/client';
+import { login as loginApi, logout as logoutApi, me } from '../api/auth';
+import {
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  setTokens,
+} from '../api/tokens';
 import type { LoginUserDto } from '../api/types';
 
 interface AuthContextValue {
+  /** Kept for ProtectedRoute compatibility — derived from localStorage. */
   token: string | null;
   user: LoginUserDto | null;
   isLoading: boolean;
-  login: (token: string, user: LoginUserDto) => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(
-    () => localStorage.getItem(TOKEN_KEY),
-  );
+  const [token, setToken] = useState<string | null>(() => getAccessToken());
   const [user, setUser] = useState<LoginUserDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount: if a token is stored, verify it by calling GET /auth/me
+  // On mount: if an access token is stored, verify it by calling GET /auth/me
   useEffect(() => {
-    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedToken = getAccessToken();
     if (!storedToken) {
       setIsLoading(false);
       return;
@@ -37,12 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     me()
       .then((userData) => {
-        setToken(storedToken);
+        setToken(getAccessToken()); // may have been rotated by interceptor
         setUser(userData);
       })
       .catch(() => {
-        // Token invalid or expired — clear it
-        localStorage.removeItem(TOKEN_KEY);
+        // Token invalid and refresh also failed — interceptor already cleared tokens
         setToken(null);
         setUser(null);
       })
@@ -51,16 +54,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const login = useCallback((newToken: string, newUser: LoginUserDto) => {
-    localStorage.setItem(TOKEN_KEY, newToken);
-    setToken(newToken);
-    setUser(newUser);
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string): Promise<void> => {
+      const { accessToken, refreshToken } = await loginApi(email, password);
+      setTokens(accessToken, refreshToken);
+      const userData = await me();
+      setToken(accessToken);
+      setUser(userData);
+    },
+    [],
+  );
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
+  const logout = useCallback(async (): Promise<void> => {
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+      try {
+        await logoutApi(refreshToken);
+      } catch {
+        // Best-effort — clear locally regardless
+      }
+    }
+    clearTokens();
     setToken(null);
     setUser(null);
+    window.location.href = '/login';
   }, []);
 
   return (
