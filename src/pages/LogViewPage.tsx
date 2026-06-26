@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getLogs } from '../api/logs';
 import { getProject } from '../api/projects';
-import type { LogEntryDto, LogLevel, LogsQueryParams, LogType } from '../api/types';
+import type { LogEntryDto, LogLevel, LogsQueryParams, LogType, ProjectDto } from '../api/types';
 import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
@@ -76,13 +76,35 @@ function LogLine({
 }
 
 // ---------------------------------------------------------------
+// Status-aware error message mapping
+// ---------------------------------------------------------------
+function getLogErrorMessage(err: unknown): string {
+  const status = (err as { response?: { status?: number } })?.response?.status;
+  switch (status) {
+    case 503:
+      return "This project's server is unreachable right now. It may be offline or still starting up.";
+    case 502:
+      return 'The log service failed while reading from the server. Try again in a moment.';
+    case 504:
+      return 'The log read timed out. Try fewer lines or retry.';
+    case 403:
+      return "You don't have access to this project's logs.";
+    case 404:
+      return 'Project not found.';
+    default:
+      return 'Failed to load logs. Please retry.';
+  }
+}
+
+// ---------------------------------------------------------------
 // Page component
 // ---------------------------------------------------------------
 export function LogViewPage() {
   const { id: projectId } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [projectName, setProjectName] = useState<string>('');
+  const [project, setProject] = useState<ProjectDto | null>(null);
+  const [projectLoading, setProjectLoading] = useState(true);
   const [logs, setLogs] = useState<LogEntryDto[]>([]);
   const [truncated, setTruncated] = useState(false);
   const [fetchedAt, setFetchedAt] = useState<string>('');
@@ -115,19 +137,21 @@ export function LogViewPage() {
       setLogs(data.lines);
       setTruncated(data.truncated);
       setFetchedAt(data.fetchedAt);
-    } catch {
-      setError('Failed to load logs. Please retry.');
+    } catch (err) {
+      setError(getLogErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
   }, [projectId, logType, lastLines, textFilter, statusCode, level]);
 
-  // Fetch project name once
+  // Fetch project metadata once — never fall back to UUID
   useEffect(() => {
     if (!projectId) return;
+    setProjectLoading(true);
     getProject(projectId)
-      .then((p) => setProjectName(p.name))
-      .catch(() => setProjectName(projectId));
+      .then((p) => setProject(p))
+      .catch(() => setProject(null))
+      .finally(() => setProjectLoading(false));
   }, [projectId]);
 
   // Initial log fetch
@@ -152,9 +176,23 @@ export function LogViewPage() {
         >
           ← Back
         </button>
-        <h1 className="logview-header__title">
-          {projectName || projectId}
-        </h1>
+        <div className="logview-header__meta">
+          {projectLoading ? (
+            <div className="logview-header__skeleton" aria-hidden="true">
+              <div className="logview-header__skeleton-title" />
+              <div className="logview-header__skeleton-subtitle" />
+            </div>
+          ) : (
+            <>
+              <h1 className="logview-header__title">
+                {project?.name ?? 'Project'}
+              </h1>
+              {project?.domain && (
+                <p className="logview-header__domain">{project.domain}</p>
+              )}
+            </>
+          )}
+        </div>
       </header>
 
       {/* ------ Filter bar ------ */}
