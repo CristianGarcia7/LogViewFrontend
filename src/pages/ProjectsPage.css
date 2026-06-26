@@ -145,6 +145,46 @@
   }
 }
 
+/* ----------------------------------------------------------
+   Pagination
+   ---------------------------------------------------------- */
+.projects-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-16);                       /* --gap-16: 16px */
+  margin-top: var(--gap-24);               /* --gap-24: 24px */
+  flex-wrap: wrap;
+}
+
+/* Sizing override — pagination buttons use the small variant */
+.projects-pagination__btn {
+  min-width: 72px;
+}
+
+.projects-pagination__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-4);                        /* --gap-4: 4px */
+}
+
+.projects-pagination__page {
+  font: var(--font-body-small);             /* 400 14px/16px Mulish */
+  color: var(--level-2-text);              /* --level-2-text: #dcdcdc */
+}
+
+.projects-pagination__count {
+  font: var(--font-body-xs);               /* 400 12px/14px Mulish */
+  color: var(--level-4-text);              /* --level-4-text: #6e6e6e */
+}
+
+@media (max-width: 600px) {
+  .projects-pagination {
+    justify-content: center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .project-card,
   .projects-search {
