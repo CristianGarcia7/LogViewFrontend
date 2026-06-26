@@ -2,11 +2,15 @@ import apiClient from './client';
 import type { ProjectListResponseDto, ProjectDto } from './types';
 
 export async function listProjects(
-  page = 1,
-  pageSize = 50,
+  params: { page?: number; pageSize?: number; search?: string } = {},
 ): Promise<ProjectListResponseDto> {
+  const { page = 1, pageSize = 24, search } = params;
   const response = await apiClient.get<ProjectListResponseDto>('/projects', {
-    params: { page, pageSize },
+    params: {
+      page,
+      pageSize,
+      ...(search && search.trim() ? { search: search.trim() } : {}),
+    },
   });
   return response.data;
 }
