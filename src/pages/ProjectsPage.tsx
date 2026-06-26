@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listProjects } from '../api/projects';
 import type { ProjectListItemDto } from '../api/types';
+import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -61,6 +62,7 @@ export function ProjectsPage() {
 
   return (
     <div className="projects-page">
+      <AppHeader />
       <header className="projects-header">
         <h1 className="projects-header__title">Projects</h1>
         <input

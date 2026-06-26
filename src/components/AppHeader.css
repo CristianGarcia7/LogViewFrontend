@@ -1,0 +1,120 @@
+/* ============================================================
+   AppHeader — shared navigation bar for protected pages
+   All values use var(--token) only; token source cited per line.
+   ============================================================ */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-16);                          /* tokens.css — utility gap */
+  padding: var(--gap-12) var(--margin-desktop); /* tokens.css — layout margin */
+  background-color: var(--level-2);            /* tokens.css — surface/level-2 */
+  border-bottom: 1px solid var(--white-5);     /* tokens.css — transparency */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ----------------------------------------------------------
+   Navigation links
+   ---------------------------------------------------------- */
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-24);                          /* tokens.css — utility gap */
+}
+
+.app-header__nav-link {
+  font: var(--font-body-regular);              /* tokens.css — 500 16px/18px Mulish */
+  color: var(--level-2-text);                 /* tokens.css — #dcdcdc */
+  text-decoration: none;
+  padding: var(--gap-4) var(--gap-8);          /* tokens.css — utility gaps */
+  border-radius: var(--radius-6);              /* tokens.css */
+  transition:
+    color var(--duration-standard) var(--ease-ui),       /* tokens.css — Shine Doctrine content */
+    background-color var(--duration-slow) var(--ease-premium); /* tokens.css — Shine Doctrine bg */
+}
+
+.app-header__nav-link:hover {
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+  background-color: var(--white-5);           /* tokens.css — transparency */
+}
+
+.app-header__nav-link:focus-visible {
+  outline: 2px solid var(--op-blue-600);       /* tokens.css — primary CTA */
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------
+   Right side — user email + logout
+   ---------------------------------------------------------- */
+.app-header__user {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-12);                          /* tokens.css — utility gap */
+}
+
+.app-header__email {
+  font: var(--font-body-small);               /* tokens.css — 400 14px/16px Mulish */
+  color: var(--level-3-text);                 /* tokens.css — #8c8c8c */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+/* Ghost / secondary button */
+.app-header__logout {
+  font: var(--font-cta-small);                /* tokens.css — 500 12px/14px Mulish */
+  color: var(--level-2-text);                 /* tokens.css — #dcdcdc */
+  background-color: transparent;
+  border: 1px solid var(--stroke-default-shadow); /* tokens.css — #131313 */
+  border-radius: var(--radius-6);             /* tokens.css */
+  padding: var(--btn-py-sm) var(--btn-px-sm); /* tokens.css — 8px 16px */
+  cursor: pointer;
+  transition:
+    color var(--duration-standard) var(--ease-ui),            /* tokens.css — Shine content */
+    border-color var(--duration-standard) var(--ease-ui),     /* tokens.css */
+    background-color var(--duration-slow) var(--ease-premium); /* tokens.css — Shine bg */
+}
+
+.app-header__logout:hover {
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+  border-color: var(--stroke-default-light);  /* tokens.css — #dcdcdc */
+  background-color: var(--white-5);           /* tokens.css — transparency */
+}
+
+.app-header__logout:active {
+  background-color: var(--white-15);          /* tokens.css — transparency */
+  transform: scale(0.99);
+}
+
+.app-header__logout:focus-visible {
+  outline: 2px solid var(--op-blue-600);      /* tokens.css — primary CTA */
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+@media (max-width: 600px) {
+  .app-header {
+    padding: var(--gap-12) var(--container-p-compact); /* tokens.css */
+  }
+
+  .app-header__email {
+    display: none;
+  }
+
+  .app-header__nav {
+    gap: var(--gap-16);                        /* tokens.css */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header__nav-link,
+  .app-header__logout {
+    transition: none;
+  }
+}

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getLogs } from '../api/logs';
 import { getProject } from '../api/projects';
 import type { LogEntryDto, LogLevel, LogsQueryParams, LogType } from '../api/types';
+import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
 import './LogViewPage.css';
@@ -140,6 +141,7 @@ export function LogViewPage() {
 
   return (
     <div className="logview-page">
+      <AppHeader />
       {/* ------ Header ------ */}
       <header className="logview-header">
         <button
