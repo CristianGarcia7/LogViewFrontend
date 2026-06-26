@@ -1,0 +1,135 @@
+/* ============================================================
+   LoginPage
+   ============================================================ */
+
+.login-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--level-1);        /* canvas base */
+  padding: var(--container-p-default);     /* 24px */
+}
+
+/* ----------------------------------------------------------
+   Card
+   ---------------------------------------------------------- */
+.login-card {
+  background-color: var(--level-2);        /* card bg */
+  border: 1px solid var(--white-5);        /* subtle outline */
+  border-radius: var(--radius-12);         /* cards/containers */
+  padding: var(--card-p-l);               /* 32px */
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-8);
+}
+
+.login-card__title {
+  font: var(--font-h2);                    /* 700 32px/34px Mulish */
+  color: var(--level-1-text);             /* #f5f5f5 */
+}
+
+.login-card__subtitle {
+  font: var(--font-body-small);            /* 400 14px/16px Mulish */
+  color: var(--level-3-text);             /* #8c8c8c */
+  margin-bottom: var(--gap-8);
+}
+
+/* ----------------------------------------------------------
+   Form
+   ---------------------------------------------------------- */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);                      /* gap-elements */
+}
+
+.login-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-label-input);             /* 8px */
+}
+
+.login-form__label {
+  font: var(--font-body-small);            /* 400 14px/16px Mulish */
+  color: var(--level-2-text);             /* #dcdcdc */
+}
+
+.login-form__input {
+  background-color: var(--level-3);        /* #131313 */
+  color: var(--level-1-text);             /* #f5f5f5 */
+  border: 1px solid var(--stroke-default-shadow); /* #131313 */
+  border-radius: var(--radius-8);          /* inputs/small buttons */
+  padding: var(--input-py-md) var(--input-px-md); /* 12px 16px */
+  font: var(--font-body-regular);          /* 500 16px/18px Mulish */
+  width: 100%;
+  transition:
+    border-color var(--duration-standard) var(--ease-ui),
+    background-color var(--duration-slow) var(--ease-premium);
+}
+
+.login-form__input::placeholder {
+  color: var(--level-4-text);             /* #6e6e6e */
+}
+
+.login-form__input:hover {
+  border-color: var(--stroke-default-light); /* #dcdcdc */
+}
+
+.login-form__input:focus {
+  border-color: var(--op-blue-600);        /* primary CTA */
+  background-color: var(--level-4);        /* #191919 */
+  outline: none;
+}
+
+/* ----------------------------------------------------------
+   Error message
+   ---------------------------------------------------------- */
+.login-form__error {
+  font: var(--font-body-small);            /* 400 14px/16px Mulish */
+  color: #f87171;                          /* error red — no token defined in spec */
+  padding: var(--gap-8) var(--input-px-md);
+  background-color: rgba(248, 113, 113, 0.1);
+  border-radius: var(--radius-6);
+  border-left: 2px solid #f87171;
+}
+
+/* ----------------------------------------------------------
+   Submit button
+   ---------------------------------------------------------- */
+.login-form__submit {
+  padding: var(--btn-py-md) var(--btn-px-md); /* 16px 24px */
+  background-color: var(--btn-primary-default); /* op-blue-600 */
+  color: var(--btn-primary-text);              /* #ffffff */
+  border-radius: var(--radius-8);              /* inputs/small buttons */
+  font: var(--font-cta-primary-bold);          /* 700 16px/18px Mulish */
+  width: 100%;
+  margin-top: var(--gap-8);
+  transition:
+    background-color var(--duration-standard) var(--ease-ui),
+    transform var(--duration-fast) var(--ease-ui);
+}
+
+.login-form__submit:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover); /* op-blue-700 */
+}
+
+.login-form__submit:active:not(:disabled) {
+  background-color: var(--btn-primary-active); /* op-blue-900 */
+  transform: scale(0.99);
+}
+
+.login-form__submit:disabled {
+  background-color: var(--btn-disabled-dark);  /* #202020 */
+  color: var(--btn-disabled-text);             /* #545454 */
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-form__input,
+  .login-form__submit {
+    transition: none;
+  }
+}

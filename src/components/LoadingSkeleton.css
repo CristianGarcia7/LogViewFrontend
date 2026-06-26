@@ -1,0 +1,72 @@
+/* ============================================================
+   LoadingSkeleton — animated shimmer cards
+   ============================================================ */
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gap-16);        /* gap-elements */
+}
+
+.skeleton-card {
+  background-color: var(--level-2);   /* card bg */
+  border-radius: var(--radius-12);    /* cards/containers */
+  padding: var(--card-p-md);          /* 24px */
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap-l);             /* 16px */
+  border: 1px solid var(--white-5);   /* subtle outline */
+}
+
+.skeleton-line {
+  border-radius: var(--radius-4);
+  background: linear-gradient(
+    90deg,
+    var(--level-3) 25%,       /* #131313 */
+    var(--level-4) 50%,       /* #191919 */
+    var(--level-3) 75%        /* #131313 */
+  );
+  background-size: 200% 100%;
+  animation: shimmer var(--duration-slow) var(--ease-premium) infinite;
+}
+
+.skeleton-line--title {
+  height: 20px;
+  width: 70%;
+}
+
+.skeleton-line--subtitle {
+  height: 14px;
+  width: 90%;
+}
+
+.skeleton-line--meta {
+  height: 12px;
+  width: 50%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Reduce motion — static gradient, no animation */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line {
+    animation: none;
+    background: var(--level-3);       /* static placeholder */
+  }
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,16 @@
+/* ============================================================
+   EmptyState — placeholder for empty lists/views
+   ============================================================ */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--container-p-spacious); /* 32px */
+  text-align: center;
+}
+
+.empty-state__message {
+  font: var(--font-body-regular);   /* 500 16px/18px Mulish */
+  color: var(--level-3-text);       /* #8c8c8c */
+}

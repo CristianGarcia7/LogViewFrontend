@@ -1,0 +1,43 @@
+/* ============================================================
+   ErrorState — error feedback component
+   ============================================================ */
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-16);                   /* gap-elements */
+  padding: var(--container-p-spacious); /* 32px */
+  text-align: center;
+}
+
+.error-state__message {
+  font: var(--font-body-regular);       /* 500 16px/18px Mulish */
+  color: var(--level-3-text);           /* #8c8c8c */
+}
+
+.error-state__retry {
+  padding: var(--btn-py-sm) var(--btn-px-md); /* 8px 24px */
+  background-color: var(--btn-primary-default); /* op-blue-600 */
+  color: var(--btn-primary-text);             /* #ffffff */
+  border-radius: var(--radius-8);             /* inputs/small buttons */
+  font: var(--font-cta-primary-medium);       /* 500 16px/18px Mulish */
+  transition:
+    background-color var(--duration-standard) var(--ease-ui),
+    transform var(--duration-fast) var(--ease-ui);
+}
+
+.error-state__retry:hover {
+  background-color: var(--btn-primary-hover); /* op-blue-700 */
+}
+
+.error-state__retry:active {
+  background-color: var(--btn-primary-active); /* op-blue-900 */
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-state__retry {
+    transition: none;
+  }
+}
