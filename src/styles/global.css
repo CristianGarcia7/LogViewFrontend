@@ -1,0 +1,106 @@
+/* ============================================================
+   Global styles — font import + body/reset
+   Tokens are declared in tokens.css (imported before this file).
+   ============================================================ */
+
+/* Mulish — self-hosted via @fontsource/mulish (NOT a CDN) */
+@import '@fontsource/mulish/400.css';
+@import '@fontsource/mulish/500.css';
+@import '@fontsource/mulish/600.css';
+@import '@fontsource/mulish/700.css';
+
+/* ----------------------------------------------------------
+   Box-sizing reset
+   ---------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----------------------------------------------------------
+   Root / body
+   ---------------------------------------------------------- */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--level-1);      /* canvas base */
+  color: var(--level-1-text);            /* #f5f5f5 */
+  font: var(--font-body-regular);        /* 500 16px/18px Mulish */
+  font-family: var(--font-family);       /* explicit family override */
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ----------------------------------------------------------
+   Typography helpers
+   ---------------------------------------------------------- */
+h1 { font: var(--font-h1); }
+h2 { font: var(--font-h2); }
+h3 { font: var(--font-h3); }
+h4 { font: var(--font-h4); }
+
+/* ----------------------------------------------------------
+   Link reset
+   ---------------------------------------------------------- */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ----------------------------------------------------------
+   Button / input reset
+   ---------------------------------------------------------- */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  font-family: var(--font-family);
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------
+   Scrollbar — minimal dark style
+   ---------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--level-2);  /* card bg */
+}
+::-webkit-scrollbar-thumb {
+  background: var(--level-5);  /* #202020 */
+  border-radius: var(--radius-infinite);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--level-6);  /* #3b3b3b */
+}
+
+/* ----------------------------------------------------------
+   Reduced motion
+   ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

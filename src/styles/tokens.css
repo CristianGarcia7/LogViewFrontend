@@ -1,0 +1,204 @@
+/* ============================================================
+   LogView Design Tokens
+   All values map directly from the brand system spec.
+   DO NOT use hardcoded values in components — always var(--token).
+   ============================================================ */
+
+:root {
+  /* ----------------------------------------------------------
+     SURFACES
+     ---------------------------------------------------------- */
+  --level-0: #000000;
+  --level-0-text: #ffffff;
+
+  --level-1: #080808;        /* canvas base */
+  --level-1-text: #f5f5f5;
+
+  --level-2: #0d0d0d;        /* card bg */
+  --level-2-text: #dcdcdc;
+
+  --level-3: #131313;
+  --level-3-text: #8c8c8c;
+
+  --level-4: #191919;
+  --level-4-text: #6e6e6e;
+
+  --level-5: #202020;
+  --level-5-text: #545454;
+
+  --level-6: #3b3b3b;
+  --level-6-text: #3b3b3b;
+
+  /* ----------------------------------------------------------
+     OP BLUE PALETTE
+     ---------------------------------------------------------- */
+  --op-blue-50:  #f6f8ff;
+  --op-blue-100: #f0f3fe;
+  --op-blue-200: #dce3fd;
+  --op-blue-300: #c1cffc;
+  --op-blue-400: #97b1f9;
+  --op-blue-500: #6689f4;
+  --op-blue-600: #4361ef;   /* PRIMARY CTA */
+  --op-blue-700: #2c40e4;
+  --op-blue-800: #242dd1;
+  --op-blue-900: #2327aa;
+  --op-blue-950: #191a52;
+
+  /* ----------------------------------------------------------
+     TRANSPARENCIES
+     ---------------------------------------------------------- */
+  --white-5:           rgba(255, 255, 255, 0.05);
+  --white-15:          rgba(255, 255, 255, 0.15);
+  --white-25:          rgba(255, 255, 255, 0.25);
+  --white-35:          rgba(255, 255, 255, 0.35);
+  --black-15:          rgba(0, 0, 0, 0.15);
+  --op-blue-600-15:    rgba(67, 97, 239, 0.15);
+  --op-blue-600-25:    rgba(67, 97, 239, 0.25);
+
+  /* ----------------------------------------------------------
+     BUTTONS
+     ---------------------------------------------------------- */
+  --btn-primary-light:   #6689f4;
+  --btn-primary-default: #4361ef;
+  --btn-primary-hover:   #2c40e4;
+  --btn-primary-active:  #2327aa;
+  --btn-primary-text:    #ffffff;
+
+  --btn-disabled-light:  #545454;
+  --btn-disabled-dark:   #202020;
+  --btn-disabled-text:   #545454;
+
+  /* ----------------------------------------------------------
+     STROKES
+     ---------------------------------------------------------- */
+  --stroke-default-light:  #dcdcdc;
+  --stroke-default-shadow: #131313;
+  --stroke-hover-light:    #ffffff;
+  --stroke-hover-shadow:   #202020;
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHY — Mulish only
+     ---------------------------------------------------------- */
+  --font-family: 'Mulish', sans-serif;
+
+  --font-display-xl: 700 60px/62px 'Mulish', sans-serif;
+  --font-display-l:  700 40px/42px 'Mulish', sans-serif;
+  --font-display-m:  700 32px/34px 'Mulish', sans-serif;
+
+  --font-h1: 700 48px/50px 'Mulish', sans-serif;
+  --font-h2: 700 32px/34px 'Mulish', sans-serif;
+  --font-h3: 600 24px/26px 'Mulish', sans-serif;
+  --font-h4: 600 20px/22px 'Mulish', sans-serif;
+
+  --font-body-large:   500 18px/20px 'Mulish', sans-serif;
+  --font-body-regular: 500 16px/18px 'Mulish', sans-serif;
+  --font-body-small:   400 14px/16px 'Mulish', sans-serif;
+  --font-body-xs:      400 12px/14px 'Mulish', sans-serif;
+
+  --font-cta-primary-medium: 500 16px/18px 'Mulish', sans-serif;
+  --font-cta-primary-bold:   700 16px/18px 'Mulish', sans-serif;
+  --font-cta-small:          500 12px/14px 'Mulish', sans-serif;
+
+  --font-caption-bold:   700 10px/12px 'Mulish', sans-serif;
+  --font-caption-medium: 500 10px/12px 'Mulish', sans-serif;
+
+  /* ----------------------------------------------------------
+     SPACING — BUTTONS
+     ---------------------------------------------------------- */
+  --btn-px-xl: 80px;
+  --btn-px-l:  32px;
+  --btn-px-md: 24px;
+  --btn-px-sm: 16px;
+  --btn-px-xs: 8px;
+
+  --btn-py-xl: 32px;
+  --btn-py-l:  24px;
+  --btn-py-md: 16px;
+  --btn-py-sm: 8px;
+
+  --gap-icon-text: 8px;
+
+  /* ----------------------------------------------------------
+     SPACING — CARDS
+     ---------------------------------------------------------- */
+  --card-p-xl:  36px;
+  --card-p-l:   32px;
+  --card-p-md:  24px;
+  --card-p-sm:  16px;
+  --card-p-xs:  8px;
+
+  --card-gap-xl: 24px;
+  --card-gap-l:  16px;
+  --card-gap-md: 8px;
+
+  /* ----------------------------------------------------------
+     SPACING — INPUTS
+     ---------------------------------------------------------- */
+  --input-px-l:  18px;
+  --input-px-md: 16px;
+  --input-px-sm: 8px;
+
+  --input-py-l:  22px;
+  --input-py-md: 12px;
+  --input-py-sm: 8px;
+
+  --gap-label-input: 8px;
+
+  /* ----------------------------------------------------------
+     SPACING — CONTAINERS
+     ---------------------------------------------------------- */
+  --container-p-spacious: 32px;
+  --container-p-default:  24px;
+  --container-p-compact:  16px;
+
+  --gap-elements: 16px;
+  --gap-sections: 48px;
+
+  /* ----------------------------------------------------------
+     SPACING — UTILITY
+     ---------------------------------------------------------- */
+  --gap-4:  4px;
+  --gap-6:  6px;
+  --gap-8:  8px;
+  --gap-12: 12px;
+  --gap-16: 16px;
+  --gap-24: 24px;
+  --gap-32: 32px;
+
+  /* ----------------------------------------------------------
+     LAYOUT
+     ---------------------------------------------------------- */
+  --sidebar-width:    141px;
+  --container-main:   1376px;
+  --container-alt:    1135px;
+  --margin-desktop:   32px;
+  --gutter:           24px;
+
+  /* ----------------------------------------------------------
+     RADIUS
+     ---------------------------------------------------------- */
+  --radius-2:        2px;
+  --radius-4:        4px;
+  --radius-6:        6px;
+  --radius-8:        8px;
+  --radius-10:       10px;
+  --radius-12:       12px;   /* cards / containers */
+  --radius-16:       16px;
+  --radius-24:       24px;
+  --radius-32:       32px;
+  --radius-infinite: 9999px;
+
+  /* ----------------------------------------------------------
+     MOTION — Shine Doctrine
+     bg/glow  → slow (400ms) + premium easing
+     content  → standard (300ms) + ui easing
+     ---------------------------------------------------------- */
+  --duration-fast:     120ms;
+  --duration-standard: 300ms;
+  --duration-slow:     400ms;
+  --duration-story:    600ms;
+
+  --ease-ui:      cubic-bezier(0.2, 0, 0, 1);
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-story:   cubic-bezier(0, 0, 0.58, 1);
+}
