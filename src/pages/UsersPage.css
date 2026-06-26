@@ -1,0 +1,272 @@
+/* ============================================================
+   UsersPage — admin user management
+   All values use var(--token) only; token source cited per line.
+   ============================================================ */
+
+.users-page {
+  min-height: 100dvh;
+  background-color: var(--level-1);           /* tokens.css — canvas base */
+  display: flex;
+  flex-direction: column;
+}
+
+.users-main {
+  max-width: var(--container-main);           /* tokens.css — 1376px */
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--container-p-spacious) var(--margin-desktop); /* tokens.css */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-32);                          /* tokens.css — utility gap */
+}
+
+.users-page__title {
+  font: var(--font-h1);                        /* tokens.css — 700 48px/50px Mulish */
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+}
+
+/* ----------------------------------------------------------
+   Create user section
+   ---------------------------------------------------------- */
+.users-create-section {
+  background-color: var(--level-2);            /* tokens.css — card bg */
+  border: 1px solid var(--white-5);           /* tokens.css — transparency */
+  border-radius: var(--radius-12);             /* tokens.css — cards/containers */
+  padding: var(--card-p-md);                  /* tokens.css — 24px */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);                          /* tokens.css */
+}
+
+.users-create-section__title {
+  font: var(--font-h3);                        /* tokens.css — 600 24px/26px Mulish */
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+}
+
+/* ----------------------------------------------------------
+   Form
+   ---------------------------------------------------------- */
+.users-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-12);                          /* tokens.css */
+}
+
+.users-form__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gap-16);                          /* tokens.css */
+  flex-wrap: wrap;
+}
+
+.users-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-label-input);                 /* tokens.css — 8px */
+  flex: 1;
+  min-width: 180px;
+}
+
+.users-form__field--narrow {
+  flex: 0 0 140px;
+  min-width: 140px;
+}
+
+.users-form__field--action {
+  flex: 0 0 auto;
+  min-width: unset;
+}
+
+.users-form__label {
+  font: var(--font-body-small);               /* tokens.css — 400 14px/16px Mulish */
+  color: var(--level-2-text);                 /* tokens.css — #dcdcdc */
+}
+
+.users-form__input,
+.users-form__select {
+  background-color: var(--level-3);            /* tokens.css — #131313 */
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+  border: 1px solid var(--stroke-default-shadow); /* tokens.css — #131313 */
+  border-radius: var(--radius-8);              /* tokens.css */
+  padding: var(--input-py-md) var(--input-px-md); /* tokens.css — 12px 16px */
+  font: var(--font-body-regular);             /* tokens.css — 500 16px/18px Mulish */
+  width: 100%;
+  transition:
+    border-color var(--duration-standard) var(--ease-ui),       /* tokens.css — Shine content */
+    background-color var(--duration-slow) var(--ease-premium);  /* tokens.css — Shine bg */
+}
+
+.users-form__input::placeholder {
+  color: var(--level-4-text);                 /* tokens.css — #6e6e6e */
+}
+
+.users-form__input:hover,
+.users-form__select:hover {
+  border-color: var(--stroke-default-light);  /* tokens.css — #dcdcdc */
+}
+
+.users-form__input:focus,
+.users-form__select:focus {
+  border-color: var(--op-blue-600);            /* tokens.css — primary CTA */
+  background-color: var(--level-4);           /* tokens.css — #191919 */
+  outline: none;
+}
+
+.users-form__submit {
+  padding: var(--btn-py-md) var(--btn-px-md);  /* tokens.css — 16px 24px */
+  background-color: var(--btn-primary-default); /* tokens.css — op-blue-600 */
+  color: var(--btn-primary-text);              /* tokens.css — #ffffff */
+  border-radius: var(--radius-8);              /* tokens.css */
+  font: var(--font-cta-primary-bold);          /* tokens.css — 700 16px/18px Mulish */
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-standard) var(--ease-ui), /* tokens.css */
+    transform var(--duration-fast) var(--ease-ui);             /* tokens.css */
+}
+
+.users-form__submit:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover);  /* tokens.css — op-blue-700 */
+}
+
+.users-form__submit:active:not(:disabled) {
+  background-color: var(--btn-primary-active); /* tokens.css — op-blue-900 */
+  transform: scale(0.99);
+}
+
+.users-form__submit:disabled {
+  background-color: var(--btn-disabled-dark);  /* tokens.css — #202020 */
+  color: var(--btn-disabled-text);             /* tokens.css — #545454 */
+  cursor: not-allowed;
+}
+
+.users-form__error {
+  font: var(--font-body-small);               /* tokens.css — 400 14px/16px Mulish */
+  color: #f87171;                              /* error red — no token defined in spec */
+  padding: var(--gap-8) var(--input-px-md);    /* tokens.css */
+  background-color: rgba(248, 113, 113, 0.1);
+  border-radius: var(--radius-6);              /* tokens.css */
+  border-left: 2px solid #f87171;
+}
+
+/* ----------------------------------------------------------
+   User list section
+   ---------------------------------------------------------- */
+.users-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);                          /* tokens.css */
+}
+
+.users-list-section__title {
+  font: var(--font-h3);                        /* tokens.css — 600 24px/26px Mulish */
+  color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+}
+
+/* ----------------------------------------------------------
+   Table
+   ---------------------------------------------------------- */
+.users-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-12);             /* tokens.css */
+  border: 1px solid var(--white-5);           /* tokens.css — transparency */
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--level-2);            /* tokens.css — card bg */
+}
+
+.users-table__th {
+  font: var(--font-body-small);               /* tokens.css — 400 14px/16px Mulish */
+  color: var(--level-3-text);                 /* tokens.css — #8c8c8c */
+  text-align: left;
+  padding: var(--card-p-sm) var(--card-p-md); /* tokens.css — 16px 24px */
+  border-bottom: 1px solid var(--white-5);    /* tokens.css */
+  white-space: nowrap;
+}
+
+.users-table__row {
+  transition: background-color var(--duration-standard) var(--ease-ui); /* tokens.css — Shine content */
+}
+
+.users-table__row:hover {
+  background-color: var(--level-3);           /* tokens.css — #131313 */
+}
+
+.users-table__td {
+  font: var(--font-body-regular);             /* tokens.css — 500 16px/18px Mulish */
+  color: var(--level-1-text);                /* tokens.css — #f5f5f5 */
+  padding: var(--card-p-sm) var(--card-p-md); /* tokens.css */
+  border-bottom: 1px solid var(--white-5);   /* tokens.css */
+}
+
+.users-table__row:last-child .users-table__td {
+  border-bottom: none;
+}
+
+.users-table__td--email {
+  word-break: break-all;
+}
+
+.users-table__td--meta {
+  font: var(--font-body-xs);                  /* tokens.css — 400 12px/14px Mulish */
+  color: var(--level-3-text);                /* tokens.css — #8c8c8c */
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   Role badge
+   ---------------------------------------------------------- */
+.users-role-badge {
+  display: inline-block;
+  font: var(--font-caption-bold);             /* tokens.css — 700 10px/12px Mulish */
+  padding: var(--gap-4) var(--gap-8);          /* tokens.css */
+  border-radius: var(--radius-infinite);       /* tokens.css */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.users-role-badge--admin {
+  background-color: var(--op-blue-600-15);    /* tokens.css — transparency */
+  color: var(--op-blue-400);                  /* tokens.css — op-blue palette */
+  border: 1px solid var(--op-blue-600-25);    /* tokens.css */
+}
+
+.users-role-badge--viewer {
+  background-color: var(--white-5);           /* tokens.css — transparency */
+  color: var(--level-2-text);                /* tokens.css — #dcdcdc */
+  border: 1px solid var(--white-15);          /* tokens.css */
+}
+
+/* ----------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+@media (max-width: 600px) {
+  .users-main {
+    padding: var(--container-p-default) var(--container-p-compact); /* tokens.css */
+  }
+
+  .users-form__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .users-form__field--narrow,
+  .users-form__field--action {
+    flex: 1;
+  }
+
+  .users-form__submit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .users-form__input,
+  .users-form__select,
+  .users-form__submit,
+  .users-table__row {
+    transition: none;
+  }
+}
