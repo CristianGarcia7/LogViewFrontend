@@ -1,0 +1,156 @@
+/* ============================================================
+   Shared OP Component Utilities
+   Utility classes for cohesive card, input, and button patterns.
+   All values use var(--token) only; token source cited per line.
+   Import once in main.tsx — use across all pages.
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   .op-card — standard elevated card surface
+   ---------------------------------------------------------- */
+.op-card {
+  background-color: var(--level-2);            /* --level-2: card background */
+  border: 1px solid var(--white-5);            /* --white-5: subtle outline */
+  border-radius: var(--radius-12);             /* --radius-12: cards/containers */
+  padding: var(--card-p-md);                   /* --card-p-md: 24px */
+}
+
+/* ----------------------------------------------------------
+   .op-input — standard form input / select
+   ---------------------------------------------------------- */
+.op-input {
+  background-color: var(--level-3);            /* --level-3: field bg */
+  color: var(--level-1-text);                 /* --level-1-text: #f5f5f5 */
+  border: 1px solid var(--stroke-default-shadow); /* --stroke-default-shadow: #131313 */
+  border-radius: var(--radius-8);              /* --radius-8: inputs/small buttons */
+  padding: var(--input-py-md) var(--input-px-md); /* --input-py-md: 12px, --input-px-md: 16px */
+  font: var(--font-body-regular);             /* --font-body-regular: 500 16px/18px Mulish */
+  font-family: var(--font-family);            /* --font-family: Mulish */
+  width: 100%;
+  transition:
+    border-color var(--duration-standard) var(--ease-ui),     /* --duration-standard --ease-ui */
+    background-color var(--duration-slow) var(--ease-premium); /* --duration-slow --ease-premium */
+}
+
+.op-input::placeholder {
+  color: var(--level-4-text);                 /* --level-4-text: #6e6e6e */
+}
+
+.op-input:hover {
+  border-color: var(--stroke-default-light);  /* --stroke-default-light: #dcdcdc */
+}
+
+.op-input:focus {
+  border-color: var(--op-blue-600);            /* --op-blue-600: primary CTA */
+  background-color: var(--level-4);           /* --level-4: #191919 */
+  outline: none;
+}
+
+/* select option colors in dark context */
+.op-input option {
+  background-color: var(--level-3);            /* --level-3 */
+  color: var(--level-1-text);                 /* --level-1-text */
+}
+
+/* ----------------------------------------------------------
+   .op-button-primary — primary CTA button with Shine Doctrine
+   ---------------------------------------------------------- */
+.op-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-icon-text);                  /* --gap-icon-text: 8px */
+  padding: var(--btn-py-md) var(--btn-px-md); /* --btn-py-md: 16px, --btn-px-md: 24px */
+  background-color: var(--btn-primary-default); /* --btn-primary-default: op-blue-600 */
+  color: var(--btn-primary-text);             /* --btn-primary-text: #ffffff */
+  border-radius: var(--radius-8);             /* --radius-8 */
+  font: var(--font-cta-primary-bold);         /* --font-cta-primary-bold: 700 16px/18px Mulish */
+  font-family: var(--font-family);
+  cursor: pointer;
+  white-space: nowrap;
+  /* Shine Doctrine — Layer 1: bg/glow slow+premium, Layer 2: content standard+ui */
+  transition:
+    background-color var(--duration-slow) var(--ease-premium),   /* --duration-slow --ease-premium */
+    box-shadow var(--duration-slow) var(--ease-premium),         /* --duration-slow --ease-premium */
+    color var(--duration-standard) var(--ease-ui),               /* --duration-standard --ease-ui */
+    transform var(--duration-fast) var(--ease-ui);               /* --duration-fast --ease-ui */
+}
+
+.op-button-primary:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover); /* --btn-primary-hover: op-blue-700 */
+  box-shadow: 0 0 0 3px var(--op-blue-600-15); /* --op-blue-600-15: glow halo */
+}
+
+.op-button-primary:active:not(:disabled) {
+  background-color: var(--btn-primary-active); /* --btn-primary-active: op-blue-900 */
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.op-button-primary:focus-visible {
+  outline: 2px solid var(--op-blue-600);       /* --op-blue-600 */
+  outline-offset: 2px;
+}
+
+.op-button-primary:disabled {
+  background-color: var(--btn-disabled-dark);  /* --btn-disabled-dark: #202020 */
+  color: var(--btn-disabled-text);             /* --btn-disabled-text: #545454 */
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ----------------------------------------------------------
+   .op-button-ghost — secondary / ghost button
+   ---------------------------------------------------------- */
+.op-button-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-icon-text);                  /* --gap-icon-text: 8px */
+  padding: var(--btn-py-sm) var(--btn-px-sm); /* --btn-py-sm: 8px, --btn-px-sm: 16px */
+  background-color: transparent;
+  color: var(--level-2-text);                 /* --level-2-text: #dcdcdc */
+  border: 1px solid var(--stroke-default-shadow); /* --stroke-default-shadow: #131313 */
+  border-radius: var(--radius-6);             /* --radius-6 */
+  font: var(--font-cta-small);               /* --font-cta-small: 500 12px/14px Mulish */
+  font-family: var(--font-family);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--duration-standard) var(--ease-ui),               /* --duration-standard --ease-ui */
+    border-color var(--duration-standard) var(--ease-ui),
+    background-color var(--duration-slow) var(--ease-premium);   /* --duration-slow --ease-premium */
+}
+
+.op-button-ghost:hover:not(:disabled) {
+  color: var(--level-1-text);                 /* --level-1-text: #f5f5f5 */
+  border-color: var(--stroke-default-light);  /* --stroke-default-light: #dcdcdc */
+  background-color: var(--white-5);           /* --white-5: rgba(255,255,255,0.05) */
+}
+
+.op-button-ghost:active:not(:disabled) {
+  background-color: var(--white-15);          /* --white-15: rgba(255,255,255,0.15) */
+  transform: scale(0.99);
+}
+
+.op-button-ghost:focus-visible {
+  outline: 2px solid var(--op-blue-600);       /* --op-blue-600 */
+  outline-offset: 2px;
+}
+
+.op-button-ghost:disabled {
+  color: var(--btn-disabled-text);             /* --btn-disabled-text: #545454 */
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   Reduced motion overrides
+   ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .op-input,
+  .op-button-primary,
+  .op-button-ghost {
+    transition: none;
+  }
+}

@@ -189,6 +189,26 @@
   --radius-infinite: 9999px;
 
   /* ----------------------------------------------------------
+     SEMANTIC COLORS
+     Derived from design system palette — NOT arbitrary values.
+     These are used for status badges and inline feedback states.
+     ---------------------------------------------------------- */
+  /* Error — warm red at 15% fill / full color for text */
+  --semantic-error-bg:   rgba(248, 113, 113, 0.15);
+  --semantic-error-text: #f87171;
+  --semantic-error-border: rgba(248, 113, 113, 0.35);
+
+  /* Warning — amber at 15% fill / full color for text */
+  --semantic-warn-bg:   rgba(251, 191, 36, 0.15);
+  --semantic-warn-text: #fbbf24;
+  --semantic-warn-border: rgba(251, 191, 36, 0.35);
+
+  /* Success / ok — emerald at 15% fill / full color for text */
+  --semantic-ok-bg:   rgba(52, 211, 153, 0.15);
+  --semantic-ok-text: #34d399;
+  --semantic-ok-border: rgba(52, 211, 153, 0.35);
+
+  /* ----------------------------------------------------------
      MOTION — Shine Doctrine
      bg/glow  → slow (400ms) + premium easing
      content  → standard (300ms) + ui easing
