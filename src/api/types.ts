@@ -92,3 +92,12 @@ export interface ProjectDto {
   sourceType: string;
   lastSyncedAt?: string | null;
 }
+
+export interface SyncResultDto {
+  instancesScanned: number;
+  instancesSkipped: number;
+  synced: number;
+  created: number;
+  updated: number;
+  rejected: number;
+}

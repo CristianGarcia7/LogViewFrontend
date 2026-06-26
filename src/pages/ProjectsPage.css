@@ -22,6 +22,16 @@
   flex-wrap: wrap;
 }
 
+/* ----------------------------------------------------------
+   Header actions — search + sync side by side
+   ---------------------------------------------------------- */
+.projects-header__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-12);                     /* --gap-12: 12px between search and sync */
+  flex-wrap: wrap;
+}
+
 .projects-header__title {
   font: var(--font-h1);                   /* 700 48px/50px Mulish */
   color: var(--level-1-text);            /* #f5f5f5 */
@@ -30,16 +40,31 @@
 /* ----------------------------------------------------------
    Search
    ---------------------------------------------------------- */
+.projects-search-wrap {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+}
+
+.projects-search-wrap__icon {
+  position: absolute;
+  left: var(--input-px-md);               /* --input-px-md: 16px */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--level-4-text);            /* --level-4-text: #6e6e6e */
+  pointer-events: none;
+}
+
 .projects-search {
   background-color: var(--level-3);       /* --level-3 */
   color: var(--level-1-text);            /* --level-1-text */
   border: 1px solid var(--stroke-default-shadow); /* --stroke-default-shadow */
   border-radius: var(--radius-8);         /* --radius-8 */
   padding: var(--input-py-md) var(--input-px-md); /* --input-py-md --input-px-md */
+  padding-left: var(--gap-32);            /* --gap-32: room for the search icon */
   font: var(--font-body-regular);         /* --font-body-regular */
   font-family: var(--font-family);       /* --font-family */
-  width: 320px;
-  max-width: 100%;
+  width: 100%;
   transition:
     border-color var(--duration-standard) var(--ease-ui),        /* --duration-standard --ease-ui */
     background-color var(--duration-slow) var(--ease-premium);   /* --duration-slow --ease-premium */
@@ -57,6 +82,15 @@
   border-color: var(--op-blue-600);       /* --op-blue-600 */
   background-color: var(--level-4);       /* --level-4 */
   outline: none;
+}
+
+/* ----------------------------------------------------------
+   Search status — live feedback so filtering is never silent
+   ---------------------------------------------------------- */
+.projects-search-status {
+  font: var(--font-body-small);           /* --font-body-small */
+  color: var(--level-3-text);            /* --level-3-text: #8c8c8c */
+  margin-top: calc(-1 * var(--gap-12));  /* tighten against header */
 }
 
 /* ----------------------------------------------------------
@@ -106,21 +140,166 @@
   box-shadow: 0 2px 8px var(--black-15);
 }
 
+.project-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-12);                     /* --gap-12 */
+}
+
+.project-card__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-8);         /* --radius-8 */
+  background-color: var(--op-blue-600-15); /* --op-blue-600-15 */
+  color: var(--op-blue-400);             /* --op-blue-400: brand accent */
+}
+
 .project-card__name {
+  flex: 1;
   font: var(--font-h4);                   /* 600 20px/22px Mulish */
   color: var(--level-1-text);            /* #f5f5f5 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-card__go {
+  flex-shrink: 0;
+  color: var(--level-5-text);            /* --level-5-text: #545454 */
+  transition:
+    color var(--duration-standard) var(--ease-ui),       /* --duration-standard --ease-ui */
+    transform var(--duration-standard) var(--ease-ui);
+}
+
+.project-card:hover .project-card__go {
+  color: var(--op-blue-400);             /* --op-blue-400 */
+  transform: translateX(4px);            /* micro_shift: 4px per motion spec */
 }
 
 .project-card__domain {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                      /* --gap-6 */
   font: var(--font-body-small);           /* 400 14px/16px Mulish */
   color: var(--level-3-text);            /* #8c8c8c */
   word-break: break-all;
 }
 
+.project-card__domain svg {
+  flex-shrink: 0;
+  color: var(--level-4-text);            /* --level-4-text */
+}
+
 .project-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                      /* --gap-6 */
   font: var(--font-body-xs);             /* 400 12px/14px Mulish */
   color: var(--level-4-text);            /* #6e6e6e */
   margin-top: auto;                       /* push to bottom */
+}
+
+/* ----------------------------------------------------------
+   Sync button area
+   ---------------------------------------------------------- */
+.projects-sync {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap-6);                      /* --gap-6: 6px — tight gap for helper text */
+}
+
+.projects-sync__hint {
+  font: var(--font-body-small);           /* --font-body-small: 400 14px/16px Mulish */
+  color: var(--level-3-text);            /* --level-3-text: #8c8c8c muted caption */
+}
+
+/* ----------------------------------------------------------
+   Inline spinner — used inside the sync button while loading
+   ---------------------------------------------------------- */
+.projects-sync__spinner {
+  display: inline-block;
+  width: 14px;                            /* sized to sit beside button label */
+  height: 14px;
+  border-radius: var(--radius-infinite);  /* --radius-infinite: full circle */
+  border: 2px solid var(--white-15);      /* --white-15: transparent track */
+  border-top-color: var(--btn-primary-text); /* --btn-primary-text: #ffffff active arc */
+  animation: projects-spin var(--duration-story) linear infinite; /* --duration-story: 600ms */
+  flex-shrink: 0;
+}
+
+@keyframes projects-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------------
+   Sync result banner — subtle blue tinted success surface
+   ---------------------------------------------------------- */
+.projects-sync-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-12);                     /* --gap-12: 12px */
+  padding: var(--card-p-sm) var(--card-p-md); /* --card-p-sm: 16px top/bottom, --card-p-md: 24px sides */
+  background-color: var(--semantic-ok-bg); /* --semantic-ok-bg: rgba(52,211,153,0.15) */
+  border: 1px solid var(--semantic-ok-border); /* --semantic-ok-border */
+  border-radius: var(--radius-8);          /* --radius-8: 8px */
+  font: var(--font-body-small);            /* --font-body-small: 400 14px/16px Mulish */
+  color: var(--semantic-ok-text);          /* --semantic-ok-text: #34d399 */
+}
+
+.projects-sync-result__close {
+  background: none;
+  border: none;
+  color: var(--semantic-ok-text);          /* --semantic-ok-text: matches banner text */
+  font: var(--font-body-regular);          /* --font-body-regular: legible × close */
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--gap-4);                /* --gap-4: 4px — minimal hit-target padding */
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: opacity var(--duration-standard) var(--ease-ui); /* --duration-standard --ease-ui */
+}
+
+.projects-sync-result__close:hover {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------
+   Sync error banner — semantic error surface
+   ---------------------------------------------------------- */
+.projects-sync-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-12);                     /* --gap-12: 12px */
+  padding: var(--card-p-sm) var(--card-p-md); /* --card-p-sm: 16px top/bottom, --card-p-md: 24px sides */
+  background-color: var(--semantic-error-bg); /* --semantic-error-bg: rgba(248,113,113,0.15) */
+  border: 1px solid var(--semantic-error-border); /* --semantic-error-border */
+  border-radius: var(--radius-8);          /* --radius-8: 8px */
+  font: var(--font-body-small);            /* --font-body-small: 400 14px/16px Mulish */
+  color: var(--semantic-error-text);       /* --semantic-error-text: #f87171 */
+}
+
+.projects-sync-error__close {
+  background: none;
+  border: none;
+  color: var(--semantic-error-text);       /* --semantic-error-text: matches banner text */
+  font: var(--font-body-regular);          /* --font-body-regular: legible × close */
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--gap-4);                /* --gap-4: 4px */
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: opacity var(--duration-standard) var(--ease-ui); /* --duration-standard --ease-ui */
+}
+
+.projects-sync-error__close:hover {
+  opacity: 1;
 }
 
 /* ----------------------------------------------------------
@@ -190,5 +369,15 @@
   .projects-search {
     transition: none;
     transform: none !important;
+  }
+
+  .projects-sync__spinner {
+    animation: none;                      /* stop spinning; rendered as a static partial arc */
+    border-top-color: var(--btn-primary-text); /* --btn-primary-text: #ffffff keep arc visible */
+  }
+
+  .projects-sync-result__close,
+  .projects-sync-error__close {
+    transition: none;
   }
 }
