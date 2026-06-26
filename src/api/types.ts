@@ -11,9 +11,34 @@ export interface LoginUserDto {
   role: 'admin' | 'viewer';
 }
 
-export interface LoginResponseDto {
+export interface AuthTokensResponseDto {
   accessToken: string;
-  user: LoginUserDto;
+  refreshToken: string;
+}
+
+export interface RefreshTokenDto {
+  refreshToken: string;
+}
+
+export interface CreateUserRequestDto {
+  email: string;
+  password: string;
+  role: 'admin' | 'viewer';
+}
+
+export interface UserResponseDto {
+  id: string;
+  email: string;
+  role: 'admin' | 'viewer';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserListResponseDto {
+  items: UserResponseDto[];
+  total: number;
+  skip: number;
+  take: number;
 }
 
 export interface ProjectListItemDto {

@@ -1,9 +1,29 @@
 import apiClient from './client';
-import type { LoginDto, LoginResponseDto, LoginUserDto } from './types';
+import type { AuthTokensResponseDto, LoginUserDto } from './types';
 
-export async function login(dto: LoginDto): Promise<LoginResponseDto> {
-  const response = await apiClient.post<LoginResponseDto>('/auth/login', dto);
+export async function login(
+  email: string,
+  password: string,
+): Promise<AuthTokensResponseDto> {
+  const response = await apiClient.post<AuthTokensResponseDto>('/auth/login', {
+    email,
+    password,
+  });
   return response.data;
+}
+
+export async function refresh(
+  refreshToken: string,
+): Promise<AuthTokensResponseDto> {
+  const response = await apiClient.post<AuthTokensResponseDto>(
+    '/auth/refresh',
+    { refreshToken },
+  );
+  return response.data;
+}
+
+export async function logout(refreshToken: string): Promise<void> {
+  await apiClient.post('/auth/logout', { refreshToken });
 }
 
 export async function me(): Promise<LoginUserDto> {
