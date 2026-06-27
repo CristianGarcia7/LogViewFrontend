@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { ProjectListResponseDto, ProjectDto, SyncResultDto } from './types';
+import type { ProjectListResponseDto, ProjectDto, SyncResultDto, HealthCheckResponseDto } from './types';
 
 export async function listProjects(
   params: { page?: number; pageSize?: number; search?: string } = {},
@@ -25,6 +25,14 @@ export async function syncProjects(): Promise<SyncResultDto> {
     '/projects/sync',
     undefined,
     { timeout: 120_000 }, // sync is synchronous and slow (~60s); allow up to 2 min
+  );
+  return response.data;
+}
+
+export async function getProjectHealth(projectId: string): Promise<HealthCheckResponseDto> {
+  const response = await apiClient.get<HealthCheckResponseDto>(
+    `/projects/${projectId}/health`,
+    { timeout: 30_000 }, // on-demand probe can be slow (10s+)
   );
   return response.data;
 }

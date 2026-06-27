@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
 import { Icon } from '../components/Icon';
 import { LogStatsPanel } from '../components/LogStatsPanel';
+import { ProjectHealthPanel } from '../components/ProjectHealthPanel';
 import { Spinner } from '../components/Spinner';
 import { useToast } from '../context/ToastContext';
 import './LogViewPage.css';
@@ -268,6 +269,9 @@ export function LogViewPage() {
           All projects
         </button>
       </header>
+
+      {/* ------ Project health + SSL panel ------ */}
+      {projectId && <ProjectHealthPanel projectId={projectId} />}
 
       {/* ------ Filter bar ------ */}
       <div className="logview-filters" role="search" aria-label="Log filters">

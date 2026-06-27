@@ -101,3 +101,22 @@ export interface SyncResultDto {
   updated: number;
   rejected: number;
 }
+
+export interface SslInfoDto {
+  validFrom: string;
+  validTo: string;
+  daysUntilExpiry: number;
+  expired: boolean;
+  valid: boolean;
+  issuer: string;
+}
+
+export interface HealthCheckResponseDto {
+  reachable: boolean;
+  httpStatus: number | null;
+  latencyMs: number | null;
+  checkedAt: string;
+  ssl: SslInfoDto | null;
+  secure: boolean;
+  reason?: string | null;
+}
