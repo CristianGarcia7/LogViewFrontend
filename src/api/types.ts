@@ -56,7 +56,7 @@ export interface ProjectListResponseDto {
   pageSize: number;
 }
 
-export type LogType = 'access' | 'error';
+export type LogType = 'access' | 'error' | 'backend';
 export type LogLevel = 'error' | 'warn' | 'notice' | 'info';
 
 export interface LogsQueryParams {

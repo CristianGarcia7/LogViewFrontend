@@ -57,7 +57,7 @@ function LogLine({
     <div className="log-line">
       {time && <span className="log-line__time">{time}</span>}
 
-      {logType === 'access' ? (
+      {logType !== 'error' ? (
         <>
           {entry.status !== undefined && (
             <span className={`badge ${getStatusClass(entry.status)}`}>
@@ -103,8 +103,15 @@ function LogLine({
 // Status-aware error message mapping
 // ---------------------------------------------------------------
 function getLogErrorMessage(err: unknown): string {
-  const status = (err as { response?: { status?: number } })?.response?.status;
+  const res = (err as { response?: { status?: number; data?: { message?: string } } })?.response;
+  const status = res?.status;
   switch (status) {
+    case 400: {
+      const msg = res?.data?.message ?? '';
+      return msg.toLowerCase().includes('backend')
+        ? 'This site has no separate backend log (not proxied).'
+        : 'Invalid request.';
+    }
     case 503:
       return "This project's server is unreachable right now. It may be offline or still starting up.";
     case 502:
@@ -210,7 +217,7 @@ export function LogViewPage() {
   const activeFilters: string[] = [
     `Last ${lastLines || '100'} lines`,
     ...(textFilter ? [`Text: "${textFilter}"`] : []),
-    ...(logType === 'access' && statusCode ? [`Status: ${statusCode}`] : []),
+    ...((logType === 'access' || logType === 'backend') && statusCode ? [`Status: ${statusCode}`] : []),
     ...(logType === 'error' && level ? [`Level: ${level}`] : []),
   ];
 
@@ -274,6 +281,7 @@ export function LogViewPage() {
             onChange={(e) => setLogType(e.target.value as LogType)}
           >
             <option value="access">Access</option>
+            <option value="backend">Backend (origin)</option>
             <option value="error">Error</option>
           </select>
         </div>
@@ -306,8 +314,8 @@ export function LogViewPage() {
           />
         </div>
 
-        {/* Status code (access logs) */}
-        {logType === 'access' && (
+        {/* Status code (access + backend logs) */}
+        {(logType === 'access' || logType === 'backend') && (
           <div className="filter-field">
             <label className="filter-label" htmlFor="statusCode">Status</label>
             <input
@@ -354,6 +362,13 @@ export function LogViewPage() {
           </button>
         </div>
       </div>
+
+      {/* ------ Backend log hint ------ */}
+      {logType === 'backend' && (
+        <p className="logview-type-hint">
+          Origin (apache) log — where 5xx and timeouts surface even when the nginx access log looks healthy.
+        </p>
+      )}
 
       {/* ------ Truncated warning ------ */}
       {truncated && (

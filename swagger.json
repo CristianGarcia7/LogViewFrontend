@@ -483,13 +483,14 @@
             "name": "logType",
             "required": true,
             "in": "query",
-            "description": "Type of log to read. \"access\" reads the nginx/apache access log; \"error\" reads the error log.",
+            "description": "Type of log to read. \"access\" reads the nginx/apache front-end access log; \"error\" reads the apache error log; \"backend\" reads the apache backend access log (only valid for nginx-proxied projects — returns 400 for non-proxied sites).",
             "schema": {
               "example": "access",
               "type": "string",
               "enum": [
                 "access",
-                "error"
+                "error",
+                "backend"
               ]
             }
           },

@@ -249,6 +249,15 @@
 }
 
 /* ----------------------------------------------------------
+   Backend log type hint — muted caption below the filter bar
+   ---------------------------------------------------------- */
+.logview-type-hint {
+  font: var(--font-body-xs);               /* --font-body-xs: 400 12px/14px */
+  color: var(--level-4-text);              /* --level-4-text: #6e6e6e — muted */
+  margin: calc(-1 * var(--gap-8)) 0 0;    /* --gap-8: pull up slightly under the filter bar */
+}
+
+/* ----------------------------------------------------------
    Truncated banner
    ---------------------------------------------------------- */
 .logview-truncated-banner {
