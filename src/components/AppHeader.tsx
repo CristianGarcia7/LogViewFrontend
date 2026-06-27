@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Icon } from './Icon';
 import './AppHeader.css';
 
 export function AppHeader() {
@@ -9,7 +10,10 @@ export function AppHeader() {
     <header className="app-header">
       <div className="app-header__inner">
         <div className="app-header__left">
-          <span className="app-header__brand">LogView</span>
+          <NavLink to="/projects" className="app-header__brand" aria-label="LogView — go to projects">
+            <span className="app-header__brand-mark" aria-hidden="true" />
+            LogView
+          </NavLink>
           <nav className="app-header__nav" aria-label="Main navigation">
             <NavLink
               className={({ isActive }) =>
@@ -17,6 +21,7 @@ export function AppHeader() {
               }
               to="/projects"
             >
+              <Icon name="folder" size={16} />
               Projects
             </NavLink>
             {user?.role === 'admin' && (
@@ -26,6 +31,7 @@ export function AppHeader() {
                 }
                 to="/users"
               >
+                <Icon name="users" size={16} />
                 Users
               </NavLink>
             )}
@@ -44,6 +50,7 @@ export function AppHeader() {
             onClick={() => void logout()}
             aria-label="Sign out"
           >
+            <Icon name="logOut" size={14} />
             Sign out
           </button>
         </div>

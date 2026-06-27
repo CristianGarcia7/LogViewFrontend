@@ -5,8 +5,10 @@ import type { CreateUserRequestDto, UserResponseDto } from '../api/types';
 import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
+import { Icon } from '../components/Icon';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import './UsersPage.css';
 
 export function UsersPage() {
@@ -21,6 +23,7 @@ export function UsersPage() {
 }
 
 function UsersPageContent() {
+  const { notify } = useToast();
   const [users, setUsers] = useState<UserResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +65,7 @@ function UsersPageContent() {
 
     try {
       await createUser(body);
+      notify('success', `User ${body.email} created`);
       setFormEmail('');
       setFormPassword('');
       setFormRole('viewer');
@@ -84,7 +88,10 @@ function UsersPageContent() {
       <AppHeader />
 
       <main className="users-main">
-        <h1 className="users-page__title">Users</h1>
+        <h1 className="users-page__title">
+          <Icon name="users" size={24} />
+          Users
+        </h1>
 
         {/* ------ Create user form ------ */}
         <section className="users-create-section" aria-labelledby="create-user-heading">
@@ -150,7 +157,14 @@ function UsersPageContent() {
                   className="users-form__submit"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Creating…' : 'Create'}
+                  {isSubmitting ? (
+                    'Creating…'
+                  ) : (
+                    <>
+                      <Icon name="plus" size={16} />
+                      Create
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -176,7 +190,7 @@ function UsersPageContent() {
           )}
 
           {!isLoading && !error && users.length === 0 && (
-            <EmptyState message="No users yet." />
+            <EmptyState icon="users" message="No users yet." />
           )}
 
           {!isLoading && !error && users.length > 0 && (

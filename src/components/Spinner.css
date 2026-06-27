@@ -1,0 +1,27 @@
+/* ============================================================
+   Spinner — inline/block loading indicator
+   Ring color + speed use var(--token) only; token source cited.
+   ============================================================ */
+
+.spinner {
+  display: inline-block;
+  border: 2px solid var(--white-15);           /* --white-15: faint track */
+  border-top-color: var(--op-blue-500);        /* --op-blue-500: brand accent */
+  border-radius: var(--radius-infinite);       /* --radius-infinite */
+  animation: spinner-rotate var(--duration-story) linear infinite; /* --duration-story: 600ms */
+  flex-shrink: 0;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reduced motion: stop the spin, keep a static accent ring as a cue */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    border-top-color: var(--op-blue-500);      /* --op-blue-500 */
+  }
+}

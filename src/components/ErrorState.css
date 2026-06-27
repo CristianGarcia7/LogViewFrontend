@@ -11,12 +11,26 @@
   text-align: center;
 }
 
+.error-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-infinite);      /* --radius-infinite */
+  background-color: var(--semantic-error-bg);  /* --semantic-error-bg */
+  color: var(--semantic-error-text);           /* --semantic-error-text */
+}
+
 .error-state__message {
   font: var(--font-body-regular);       /* 500 16px/18px Mulish */
   color: var(--level-3-text);           /* #8c8c8c */
 }
 
 .error-state__retry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-icon-text);                  /* --gap-icon-text: 8px */
   padding: var(--btn-py-sm) var(--btn-px-md); /* 8px 24px */
   background-color: var(--btn-primary-default); /* op-blue-600 */
   color: var(--btn-primary-text);             /* #ffffff */

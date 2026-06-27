@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getLogs } from '../api/logs';
 import { getProject } from '../api/projects';
 import type { LogEntryDto, LogLevel, LogsQueryParams, LogType, ProjectDto } from '../api/types';
 import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
+import { Icon } from '../components/Icon';
+import { LogStatsPanel } from '../components/LogStatsPanel';
+import { Spinner } from '../components/Spinner';
+import { useToast } from '../context/ToastContext';
 import './LogViewPage.css';
 
 // ---------------------------------------------------------------
@@ -29,48 +33,68 @@ function getLevelClass(level?: string): string {
   }
 }
 
+function formatLineTime(timestamp?: string): string {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleTimeString();
+}
+
 // ---------------------------------------------------------------
 // Log line rendering
 // ---------------------------------------------------------------
 function LogLine({
   entry,
   logType,
+  onCopy,
 }: {
   entry: LogEntryDto;
   logType: LogType;
+  onCopy: (text: string) => void;
 }) {
-  if (logType === 'access') {
-    return (
-      <div className="log-line">
-        {entry.status !== undefined && (
-          <span className={`badge ${getStatusClass(entry.status)}`}>
-            {entry.status}
-          </span>
-        )}
-        {entry.method && (
-          <span className="log-line__method">{entry.method}</span>
-        )}
-        {entry.path && (
-          <span className="log-line__path">{entry.path}</span>
-        )}
-        <span className="log-line__raw">{entry.raw}</span>
-      </div>
-    );
-  }
+  const time = formatLineTime(entry.timestamp);
 
-  // error log type
   return (
     <div className="log-line">
-      {entry.level && (
-        <span className={`badge ${getLevelClass(entry.level)}`}>
-          {entry.level.toUpperCase()}
-        </span>
-      )}
-      {entry.message ? (
-        <span className="log-line__message">{entry.message}</span>
+      {time && <span className="log-line__time">{time}</span>}
+
+      {logType === 'access' ? (
+        <>
+          {entry.status !== undefined && (
+            <span className={`badge ${getStatusClass(entry.status)}`}>
+              {entry.status}
+            </span>
+          )}
+          {entry.method && (
+            <span className="log-line__method">{entry.method}</span>
+          )}
+          {entry.path && <span className="log-line__path">{entry.path}</span>}
+          <span className="log-line__raw">{entry.raw}</span>
+        </>
       ) : (
-        <span className="log-line__raw">{entry.raw}</span>
+        <>
+          {entry.level && (
+            <span className={`badge ${getLevelClass(entry.level)}`}>
+              {entry.level.toUpperCase()}
+            </span>
+          )}
+          {entry.message ? (
+            <span className="log-line__message">{entry.message}</span>
+          ) : (
+            <span className="log-line__raw">{entry.raw}</span>
+          )}
+        </>
       )}
+
+      <button
+        type="button"
+        className="log-line__copy"
+        onClick={() => onCopy(entry.raw)}
+        aria-label="Copy this log line"
+        title="Copy line"
+      >
+        <Icon name="copy" size={12} />
+        Copy
+      </button>
     </div>
   );
 }
@@ -102,6 +126,7 @@ function getLogErrorMessage(err: unknown): string {
 export function LogViewPage() {
   const { id: projectId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { notify } = useToast();
 
   const [project, setProject] = useState<ProjectDto | null>(null);
   const [projectLoading, setProjectLoading] = useState(true);
@@ -159,23 +184,57 @@ export function LogViewPage() {
     fetchLogs();
   }, [fetchLogs]);
 
+  const copyText = useCallback(
+    async (text: string, okMessage: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        notify('success', okMessage);
+      } catch {
+        notify('error', 'Could not copy to clipboard.');
+      }
+    },
+    [notify],
+  );
+
+  const copyAll = useCallback(() => {
+    if (logs.length === 0) return;
+    const text = logs.map((entry) => entry.raw).join('\n');
+    void copyText(text, `Copied ${logs.length} log lines`);
+  }, [logs, copyText]);
+
   const formattedTime = fetchedAt
     ? new Date(fetchedAt).toLocaleTimeString()
     : '';
 
+  // Active-filter chips so the user always sees what is being applied
+  const activeFilters: string[] = [
+    `Last ${lastLines || '100'} lines`,
+    ...(textFilter ? [`Text: "${textFilter}"`] : []),
+    ...(logType === 'access' && statusCode ? [`Status: ${statusCode}`] : []),
+    ...(logType === 'error' && level ? [`Level: ${level}`] : []),
+  ];
+
+  // Keep existing logs visible while refreshing — only blank out on first load
+  const showInitialLoader = isLoading && logs.length === 0 && !error;
+  const isRefreshing = isLoading && logs.length > 0;
+  const showContent = !error && logs.length > 0;
+
   return (
     <div className="logview-page">
       <AppHeader />
-      {/* ------ Header ------ */}
+
+      {/* ------ Breadcrumb + header ------ */}
+      <nav className="logview-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/projects" className="logview-breadcrumb__link">
+          Projects
+        </Link>
+        <span className="logview-breadcrumb__sep" aria-hidden="true">/</span>
+        <span className="logview-breadcrumb__current" aria-current="page">
+          {projectLoading ? 'Loading…' : project?.name ?? 'Project'}
+        </span>
+      </nav>
+
       <header className="logview-header">
-        <button
-          type="button"
-          className="logview-header__back"
-          onClick={() => navigate('/projects')}
-          aria-label="Back to projects"
-        >
-          ← Back
-        </button>
         <div className="logview-header__meta">
           {projectLoading ? (
             <div className="logview-header__skeleton" aria-hidden="true">
@@ -193,6 +252,14 @@ export function LogViewPage() {
             </>
           )}
         </div>
+        <button
+          type="button"
+          className="op-button-ghost logview-header__back"
+          onClick={() => navigate('/projects')}
+        >
+          <Icon name="arrowLeft" size={16} />
+          All projects
+        </button>
       </header>
 
       {/* ------ Filter bar ------ */}
@@ -279,9 +346,11 @@ export function LogViewPage() {
             type="button"
             className="logview-refresh"
             onClick={fetchLogs}
+            disabled={isLoading}
             aria-label="Refresh logs"
           >
-            Refresh
+            <Icon name="refresh" size={16} />
+            {isLoading ? 'Refreshing…' : 'Refresh'}
           </button>
         </div>
       </div>
@@ -293,15 +362,45 @@ export function LogViewPage() {
         </div>
       )}
 
-      {/* ------ fetchedAt ------ */}
-      {fetchedAt && !isLoading && (
-        <p className="logview-fetched-at">Fetched at {formattedTime}</p>
+      {/* ------ Stats overview (derived from loaded lines) ------ */}
+      {showContent && <LogStatsPanel lines={logs} logType={logType} />}
+
+      {/* ------ Results toolbar ------ */}
+      {(showContent || isRefreshing) && (
+        <div className="logview-results">
+          <div className="logview-results__left">
+            <span className="logview-results__count">
+              {isRefreshing && <Spinner size={14} label="Refreshing logs" />}
+              {logs.length} {logs.length === 1 ? 'line' : 'lines'}
+            </span>
+            <div className="logview-results__chips">
+              {activeFilters.map((chip) => (
+                <span key={chip} className="logview-chip">{chip}</span>
+              ))}
+            </div>
+            {fetchedAt && (
+              <span className="logview-results__fetched">
+                Fetched at {formattedTime}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            className="op-button-ghost logview-results__copy"
+            onClick={copyAll}
+            disabled={logs.length === 0}
+          >
+            <Icon name="copy" size={14} />
+            Copy all
+          </button>
+        </div>
       )}
 
       {/* ------ Log output ------ */}
       <div className="logview-output-wrapper">
-        {isLoading && (
+        {showInitialLoader && (
           <div className="logview-loading" role="status" aria-label="Loading logs">
+            <Spinner size={24} label="Loading logs" />
             <span className="logview-loading__text">Loading logs…</span>
           </div>
         )}
@@ -310,14 +409,19 @@ export function LogViewPage() {
           <ErrorState message={error} onRetry={fetchLogs} />
         )}
 
-        {!isLoading && !error && logs.length === 0 && (
+        {!showInitialLoader && !error && logs.length === 0 && (
           <EmptyState message="No log lines matched the current filters." />
         )}
 
-        {!isLoading && !error && logs.length > 0 && (
+        {showContent && (
           <div className="logview-output" role="log" aria-live="polite">
             {logs.map((entry, i) => (
-              <LogLine key={i} entry={entry} logType={logType} />
+              <LogLine
+                key={i}
+                entry={entry}
+                logType={logType}
+                onCopy={(text) => void copyText(text, 'Line copied')}
+              />
             ))}
           </div>
         )}

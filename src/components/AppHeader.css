@@ -33,9 +33,33 @@
 }
 
 .app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-8);                           /* --gap-8 */
   font: var(--font-h4);                        /* --font-h4: 600 20px/22px Mulish */
   color: var(--level-1-text);                 /* --level-1-text: #f5f5f5 */
   letter-spacing: -0.01em;
+  flex-shrink: 0;
+  border-radius: var(--radius-6);              /* --radius-6 */
+  transition: opacity var(--duration-standard) var(--ease-ui); /* --duration-standard --ease-ui */
+}
+
+.app-header__brand:hover {
+  opacity: 0.85;
+}
+
+.app-header__brand:focus-visible {
+  outline: 2px solid var(--op-blue-600);       /* --op-blue-600 */
+  outline-offset: 2px;
+}
+
+/* Brand mark — OP blue dot with brand glow */
+.app-header__brand-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-infinite);       /* --radius-infinite */
+  background-color: var(--op-blue-600);        /* --op-blue-600: primary brand */
+  box-shadow: 0 0 0 3px var(--op-blue-600-15); /* --op-blue-600-15: glow halo */
   flex-shrink: 0;
 }
 
@@ -49,6 +73,9 @@
 }
 
 .app-header__nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                           /* --gap-6 */
   font: var(--font-body-regular);              /* --font-body-regular: 500 16px/18px Mulish */
   color: var(--level-3-text);                 /* --level-3-text: #8c8c8c */
   text-decoration: none;
@@ -64,9 +91,12 @@
   background-color: var(--white-5);           /* --white-5 */
 }
 
-/* Active route — full brightness, no background */
-.app-header__nav-link--active {
-  color: var(--level-1-text);                 /* --level-1-text */
+/* Active route — brand pill so "where am I" is unmistakable */
+.app-header__nav-link--active,
+.app-header__nav-link--active:hover {
+  color: var(--op-blue-400);                  /* --op-blue-400: brand accent text */
+  background-color: var(--op-blue-600-15);    /* --op-blue-600-15: brand fill */
+  font-weight: 700;                            /* matches --font-cta-primary-bold weight */
 }
 
 .app-header__nav-link:focus-visible {
@@ -94,6 +124,9 @@
 
 /* Ghost / secondary button */
 .app-header__logout {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                          /* --gap-6 */
   font: var(--font-cta-small);                /* --font-cta-small: 500 12px/14px Mulish */
   color: var(--level-2-text);                 /* --level-2-text: #dcdcdc */
   background-color: transparent;

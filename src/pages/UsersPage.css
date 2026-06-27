@@ -21,8 +21,15 @@
 }
 
 .users-page__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-12);                          /* tokens.css — --gap-12 */
   font: var(--font-h1);                        /* tokens.css — 700 48px/50px Mulish */
   color: var(--level-1-text);                 /* tokens.css — #f5f5f5 */
+}
+
+.users-page__title svg {
+  color: var(--op-blue-400);                   /* tokens.css — brand accent */
 }
 
 /* ----------------------------------------------------------
@@ -113,6 +120,10 @@
 }
 
 .users-form__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-icon-text);                   /* --gap-icon-text: 8px */
   padding: var(--btn-py-md) var(--btn-px-md);  /* --btn-py-md: 16px, --btn-px-md: 24px */
   background-color: var(--btn-primary-default); /* --btn-primary-default: op-blue-600 */
   color: var(--btn-primary-text);              /* --btn-primary-text: #ffffff */

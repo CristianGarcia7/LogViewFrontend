@@ -1,0 +1,334 @@
+/* ============================================================
+   LogStatsPanel — client-side log overview (cards + charts)
+   All values use var(--token) only; token source cited per line.
+   ============================================================ */
+
+.logview-stats {
+  background-color: var(--level-2);            /* --level-2: card surface */
+  border: 1px solid var(--white-5);            /* --white-5: subtle outline */
+  border-radius: var(--radius-12);             /* --radius-12: containers */
+  padding: var(--card-p-md);                   /* --card-p-md: 24px */
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap-xl);                      /* --card-gap-xl: 24px */
+}
+
+/* ----------------------------------------------------------
+   Head
+   ---------------------------------------------------------- */
+.logview-stats__head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-12);                          /* --gap-12 */
+  flex-wrap: wrap;
+}
+
+.logview-stats__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-8);                           /* --gap-8 */
+  font: var(--font-h4);                        /* --font-h4: 600 20px/22px */
+  color: var(--level-1-text);                  /* --level-1-text */
+}
+
+.logview-stats__title svg {
+  color: var(--op-blue-400);                   /* --op-blue-400: brand accent */
+}
+
+.logview-stats__caption {
+  font: var(--font-body-xs);                   /* --font-body-xs */
+  color: var(--level-4-text);                  /* --level-4-text */
+}
+
+.logview-stats__toggle {
+  margin-left: auto;
+}
+
+.logview-stats__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap-xl);                      /* --card-gap-xl: 24px */
+}
+
+/* ----------------------------------------------------------
+   Stat cards
+   ---------------------------------------------------------- */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--gap-16);                          /* --gap-16 */
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-6);                           /* --gap-6 */
+  background-color: var(--level-3);            /* --level-3: nested surface */
+  border: 1px solid var(--white-5);            /* --white-5 */
+  border-radius: var(--radius-10);             /* --radius-10 */
+  padding: var(--card-p-sm);                   /* --card-p-sm: 16px */
+}
+
+.stat-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-8);              /* --radius-8 */
+  margin-bottom: var(--gap-4);                 /* --gap-4 */
+}
+
+.stat-card__icon--info {
+  color: var(--op-blue-400);                   /* --op-blue-400 */
+  background-color: var(--op-blue-600-15);     /* --op-blue-600-15 */
+}
+.stat-card__icon--ok {
+  color: var(--semantic-ok-text);              /* --semantic-ok-text */
+  background-color: var(--semantic-ok-bg);     /* --semantic-ok-bg */
+}
+.stat-card__icon--warn {
+  color: var(--semantic-warn-text);            /* --semantic-warn-text */
+  background-color: var(--semantic-warn-bg);   /* --semantic-warn-bg */
+}
+.stat-card__icon--error {
+  color: var(--semantic-error-text);           /* --semantic-error-text */
+  background-color: var(--semantic-error-bg);  /* --semantic-error-bg */
+}
+.stat-card__icon--neutral {
+  color: var(--level-3-text);                  /* --level-3-text */
+  background-color: var(--white-5);            /* --white-5 */
+}
+
+.stat-card__value {
+  font: var(--font-h3);                        /* --font-h3: 600 24px/26px */
+  color: var(--level-1-text);                  /* --level-1-text */
+}
+
+.stat-card__label {
+  font: var(--font-body-xs);                   /* --font-body-xs */
+  color: var(--level-3-text);                  /* --level-3-text */
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ----------------------------------------------------------
+   Charts grid
+   ---------------------------------------------------------- */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gap-16);                          /* --gap-16 */
+}
+
+.chart-card {
+  background-color: var(--level-3);            /* --level-3 */
+  border: 1px solid var(--white-5);            /* --white-5 */
+  border-radius: var(--radius-10);             /* --radius-10 */
+  padding: var(--card-p-md);                   /* --card-p-md: 24px */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);                          /* --gap-16 */
+}
+
+.chart-card__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                           /* --gap-6 */
+  font: var(--font-body-small);                /* --font-body-small */
+  color: var(--level-2-text);                  /* --level-2-text */
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chart-card__title svg {
+  color: var(--op-blue-400);                   /* --op-blue-400 */
+}
+
+.chart-empty {
+  font: var(--font-body-small);                /* --font-body-small */
+  color: var(--level-4-text);                  /* --level-4-text */
+  padding: var(--gap-16) 0;                    /* --gap-16 */
+}
+
+/* ----------------------------------------------------------
+   Donut
+   ---------------------------------------------------------- */
+.donut {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-24);                          /* --gap-24 */
+  flex-wrap: wrap;
+}
+
+.donut__chart {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  flex-shrink: 0;
+}
+
+.donut__svg {
+  width: 100%;
+  height: 100%;
+  /* Segments already start at 12 o'clock via the +25 dashoffset in JS. */
+}
+
+.donut__track {
+  stroke: var(--level-5);                      /* --level-5: faint track */
+  stroke-width: 4;
+}
+
+.donut__segment {
+  stroke-width: 4;
+  transition: stroke-dasharray var(--duration-slow) var(--ease-premium); /* --duration-slow --ease-premium */
+}
+
+.donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut__total {
+  font: var(--font-h3);                        /* --font-h3 */
+  color: var(--level-1-text);                  /* --level-1-text */
+}
+
+.donut__total-label {
+  font: var(--font-caption-medium);            /* --font-caption-medium */
+  color: var(--level-4-text);                  /* --level-4-text */
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.donut__legend {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-8);                           /* --gap-8 */
+  flex: 1;
+  min-width: 120px;
+}
+
+.donut__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-8);                           /* --gap-8 */
+  font: var(--font-body-small);                /* --font-body-small */
+  color: var(--level-2-text);                  /* --level-2-text */
+}
+
+.donut__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-2);              /* --radius-2 */
+  flex-shrink: 0;
+}
+
+.donut__legend-label {
+  flex: 1;
+}
+
+.donut__legend-count {
+  color: var(--level-1-text);                  /* --level-1-text */
+  font-weight: 700;
+}
+
+/* ----------------------------------------------------------
+   Mini bars (time series)
+   ---------------------------------------------------------- */
+.minibars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gap-4);                           /* --gap-4 */
+  height: 120px;
+}
+
+.minibars__col {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  min-width: 3px;
+}
+
+.minibars__bar {
+  width: 100%;
+  min-height: 2px;
+  background-color: var(--op-blue-600);        /* --op-blue-600: brand */
+  border-radius: var(--radius-2);              /* --radius-2 */
+  transition: height var(--duration-slow) var(--ease-premium); /* --duration-slow --ease-premium */
+}
+
+.minibars__col:hover .minibars__bar {
+  background-color: var(--op-blue-400);        /* --op-blue-400 */
+}
+
+/* ----------------------------------------------------------
+   Ranked bar list (top paths)
+   ---------------------------------------------------------- */
+.barlist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-12);                          /* --gap-12 */
+}
+
+.barlist__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 80px auto;
+  align-items: center;
+  gap: var(--gap-8);                           /* --gap-8 */
+  font: var(--font-body-small);                /* --font-body-small */
+}
+
+.barlist__label {
+  color: var(--level-2-text);                  /* --level-2-text */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'ui-monospace', 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 12px;
+}
+
+.barlist__track {
+  height: 8px;
+  background-color: var(--white-5);            /* --white-5 */
+  border-radius: var(--radius-infinite);       /* --radius-infinite */
+  overflow: hidden;
+}
+
+.barlist__fill {
+  display: block;
+  height: 100%;
+  background-color: var(--op-blue-600);        /* --op-blue-600 */
+  border-radius: var(--radius-infinite);       /* --radius-infinite */
+  transition: width var(--duration-slow) var(--ease-premium); /* --duration-slow --ease-premium */
+}
+
+.barlist__count {
+  color: var(--level-1-text);                  /* --level-1-text */
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ----------------------------------------------------------
+   Responsive + reduced motion
+   ---------------------------------------------------------- */
+@media (max-width: 600px) {
+  .donut {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donut__segment,
+  .minibars__bar,
+  .barlist__fill {
+    transition: none;
+  }
+}
