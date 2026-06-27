@@ -2,8 +2,18 @@
    ProjectsPage
    ============================================================ */
 
+/* Full-bleed root so the sticky AppHeader spans the whole viewport */
 .projects-page {
-  max-width: var(--container-main);       /* 1376px */
+  min-height: 100dvh;
+  background-color: var(--level-1);       /* canvas base */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Centered content column — OP grid without sidebar (wide data view) */
+.projects-main {
+  width: 100%;
+  max-width: var(--container-wide);       /* --container-wide: data-dense view */
   margin: 0 auto;
   padding: var(--container-p-spacious) var(--margin-desktop); /* 32px sides */
   display: flex;
@@ -306,7 +316,7 @@
    Responsive
    ---------------------------------------------------------- */
 @media (max-width: 600px) {
-  .projects-page {
+  .projects-main {
     padding: var(--container-p-default) var(--container-p-compact); /* 24px 16px */
   }
 

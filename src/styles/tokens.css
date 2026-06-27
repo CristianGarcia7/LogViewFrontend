@@ -171,6 +171,7 @@
   --sidebar-width:    141px;
   --container-main:   1376px;
   --container-alt:    1135px;
+  --container-wide:   1760px;   /* data-dense views (project grid, log dashboard) */
   --margin-desktop:   32px;
   --gutter:           24px;
 

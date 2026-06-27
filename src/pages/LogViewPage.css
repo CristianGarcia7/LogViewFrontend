@@ -2,14 +2,25 @@
    LogViewPage
    ============================================================ */
 
+/* Full-bleed root so the sticky AppHeader spans the whole viewport */
 .logview-page {
-  max-width: var(--container-main);        /* 1376px */
+  min-height: 100dvh;
+  background-color: var(--level-1);        /* canvas base */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Centered content column — flex-fills so the log pane can grow */
+.logview-main {
+  width: 100%;
+  max-width: var(--container-wide);        /* --container-wide: data-dense view */
   margin: 0 auto;
   padding: var(--container-p-spacious) var(--margin-desktop); /* 32px sides */
   display: flex;
   flex-direction: column;
   gap: var(--gap-16);                      /* gap-elements */
-  min-height: 100dvh;                      /* let the log pane fill the viewport */
+  flex: 1;                                 /* fill remaining viewport height */
+  min-height: 0;                           /* allow inner output pane to scroll */
 }
 
 /* ----------------------------------------------------------
@@ -487,7 +498,7 @@
    Responsive
    ---------------------------------------------------------- */
 @media (max-width: 768px) {
-  .logview-page {
+  .logview-main {
     padding: var(--container-p-default) var(--container-p-compact);
   }
 

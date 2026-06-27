@@ -11,7 +11,7 @@
 }
 
 .users-main {
-  max-width: var(--container-main);           /* tokens.css — 1376px */
+  max-width: var(--container-wide);           /* tokens.css — aligns all pages */
   width: 100%;
   margin: 0 auto;
   padding: var(--container-p-spacious) var(--margin-desktop); /* tokens.css */

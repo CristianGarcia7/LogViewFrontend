@@ -113,6 +113,7 @@ export function ProjectsPage() {
   return (
     <div className="projects-page">
       <AppHeader />
+      <main className="projects-main">
       <header className="projects-header">
         <h1 className="projects-header__title">Projects</h1>
         <div className="projects-header__actions">
@@ -186,7 +187,7 @@ export function ProjectsPage() {
         </p>
       )}
 
-      <main className="projects-content">
+      <div className="projects-content">
         {isLoading && <LoadingSkeleton count={8} />}
 
         {!isLoading && error && (
@@ -233,7 +234,7 @@ export function ProjectsPage() {
             ))}
           </div>
         )}
-      </main>
+      </div>
 
       {showPagination && (
         <nav className="projects-pagination" aria-label="Projects pagination">
@@ -265,6 +266,7 @@ export function ProjectsPage() {
           </button>
         </nav>
       )}
+      </main>
     </div>
   );
 }

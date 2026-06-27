@@ -230,6 +230,7 @@ export function LogViewPage() {
   return (
     <div className="logview-page">
       <AppHeader />
+      <main className="logview-main">
 
       {/* ------ Breadcrumb + header ------ */}
       <nav className="logview-breadcrumb" aria-label="Breadcrumb">
@@ -445,6 +446,7 @@ export function LogViewPage() {
           </div>
         )}
       </div>
+      </main>
     </div>
   );
 }

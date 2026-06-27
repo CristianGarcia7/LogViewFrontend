@@ -379,13 +379,13 @@
         ]
       }
     },
-    "/projects/{id}": {
+    "/projects/{projectId}": {
       "get": {
         "description": "Returns the project with the given UUID. AccessGuard validates that the requesting user has a UserProjectAccess record for this project (or is admin). Response NEVER includes instanceId, accessLogPath, errorLogPath, or hestiaUser.",
         "operationId": "ProjectsController_getProjectById",
         "parameters": [
           {
-            "name": "id",
+            "name": "projectId",
             "required": true,
             "in": "path",
             "description": "Project UUID",
@@ -422,6 +422,54 @@
           }
         ],
         "summary": "Get a project by ID",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/{projectId}/health": {
+      "get": {
+        "description": "Makes an on-demand HTTPS probe to the project domain (not via SSM). Reports HTTP reachability, latency, and TLS certificate details including expiry. Always returns a clean DTO — never throws even when the host is unreachable. Requires the same per-project access as GET /projects/:id (admin bypasses). Stateless: results are not stored.",
+        "operationId": "ProjectsController_getProjectHealth",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "description": "Project UUID",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Probe completed — result may indicate unreachable or insecure site",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheckResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT"
+          },
+          "403": {
+            "description": "Forbidden — caller has no access to this project"
+          },
+          "404": {
+            "description": "Project not found in catalog"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Probe a project's public URL for liveness and TLS certificate status",
         "tags": [
           "projects"
         ]
@@ -483,14 +531,13 @@
             "name": "logType",
             "required": true,
             "in": "query",
-            "description": "Type of log to read. \"access\" reads the nginx/apache front-end access log; \"error\" reads the apache error log; \"backend\" reads the apache backend access log (only valid for nginx-proxied projects — returns 400 for non-proxied sites).",
+            "description": "Type of log to read. \"access\" reads the nginx/apache access log; \"error\" reads the error log.",
             "schema": {
               "example": "access",
               "type": "string",
               "enum": [
                 "access",
-                "error",
-                "backend"
+                "error"
               ]
             }
           },
@@ -845,6 +892,108 @@
           "total",
           "page",
           "pageSize"
+        ]
+      },
+      "SslStatusDto": {
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "object",
+            "description": "Certificate valid-from date (ISO 8601)",
+            "example": "2024-01-01T00:00:00.000Z",
+            "nullable": true
+          },
+          "validTo": {
+            "type": "object",
+            "description": "Certificate expiry date (ISO 8601)",
+            "example": "2025-01-01T00:00:00.000Z",
+            "nullable": true
+          },
+          "daysUntilExpiry": {
+            "type": "object",
+            "description": "Days until certificate expiry (negative = already expired)",
+            "example": 120,
+            "nullable": true
+          },
+          "expired": {
+            "type": "boolean",
+            "description": "Whether the certificate is expired",
+            "example": false
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the certificate has a trusted chain and the hostname matches",
+            "example": true
+          },
+          "issuer": {
+            "type": "object",
+            "description": "Certificate issuer common name",
+            "example": "Let's Encrypt",
+            "nullable": true
+          }
+        },
+        "required": [
+          "validFrom",
+          "validTo",
+          "daysUntilExpiry",
+          "expired",
+          "valid"
+        ]
+      },
+      "HealthCheckResponseDto": {
+        "type": "object",
+        "properties": {
+          "reachable": {
+            "type": "boolean",
+            "description": "Whether the host was reachable over HTTPS",
+            "example": true
+          },
+          "httpStatus": {
+            "type": "object",
+            "description": "HTTP status code returned by the host (null if unreachable)",
+            "example": 200,
+            "nullable": true
+          },
+          "latencyMs": {
+            "type": "object",
+            "description": "Round-trip latency in milliseconds (null if unreachable)",
+            "example": 143,
+            "nullable": true
+          },
+          "checkedAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp when the probe was executed",
+            "example": "2025-06-26T12:00:00.000Z"
+          },
+          "ssl": {
+            "description": "TLS certificate details (null if the connection could not be established)",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SslStatusDto"
+              }
+            ]
+          },
+          "secure": {
+            "type": "boolean",
+            "description": "True when the site is reachable over HTTPS AND the certificate is not expired AND the chain/hostname is valid",
+            "example": true
+          },
+          "reason": {
+            "type": "object",
+            "description": "Human-readable reason when the host is unreachable (absent when reachable)",
+            "example": "ECONNREFUSED",
+            "nullable": true
+          }
+        },
+        "required": [
+          "reachable",
+          "httpStatus",
+          "latencyMs",
+          "checkedAt",
+          "ssl",
+          "secure"
         ]
       },
       "SyncResultDto": {

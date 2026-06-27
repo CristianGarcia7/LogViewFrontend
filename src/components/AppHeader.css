@@ -14,7 +14,7 @@
 
 /* Centered content container — OP grid without sidebar */
 .app-header__inner {
-  max-width: var(--container-main);            /* --container-main: 1376px */
+  max-width: var(--container-wide);            /* --container-wide: aligns with page content */
   margin: 0 auto;
   padding: var(--gap-12) var(--margin-desktop); /* --gap-12 --margin-desktop: 32px */
   display: flex;
