@@ -26,6 +26,13 @@
   animation: banner-enter var(--duration-standard) var(--ease-premium) both;
 }
 
+/* Degraded (amber) variant — backend reachable but a dependency is down. */
+.backend-status-banner--warn {
+  background-color: var(--semantic-warn-bg);
+  border-bottom: 1px solid var(--semantic-warn-border);
+  color: var(--semantic-warn-text);
+}
+
 @keyframes banner-enter {
   from {
     opacity: 0;
