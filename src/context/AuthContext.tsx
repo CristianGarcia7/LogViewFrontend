@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -14,6 +15,7 @@ import {
   setTokens,
 } from '../api/tokens';
 import type { LoginUserDto } from '../api/types';
+import { useBackendStatus } from './BackendStatusContext';
 
 interface AuthContextValue {
   /** Kept for ProtectedRoute compatibility — derived from localStorage. */
@@ -30,6 +32,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => getAccessToken());
   const [user, setUser] = useState<LoginUserDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isDown } = useBackendStatus();
+  // Track the previous isDown value so we can detect the true → false recovery edge.
+  const prevIsDownRef = useRef<boolean>(isDown);
 
   // On mount: if an access token is stored, verify it by calling GET /auth/me
   useEffect(() => {
@@ -62,6 +67,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       });
   }, []);
+
+  // Recovery effect: when the backend transitions from down → healthy, re-fetch
+  // the user if a token is present but user is still null (i.e. the initial
+  // me() call failed with a network error during an outage).
+  useEffect(() => {
+    const wasDown = prevIsDownRef.current;
+    prevIsDownRef.current = isDown;
+
+    // Only act on the true → false edge (recovery).
+    if (!wasDown || isDown) return;
+
+    const storedToken = getAccessToken();
+    if (!storedToken || user !== null) return;
+
+    me()
+      .then((userData) => {
+        setToken(getAccessToken()); // may have been rotated by interceptor
+        setUser(userData);
+      })
+      .catch((error: unknown) => {
+        const axiosErr = error as { response?: unknown };
+        if (!axiosErr.response) {
+          // Still a network error — backend not fully up yet. Do nothing;
+          // wait for the next recovery edge.
+          return;
+        }
+        // Real HTTP failure (e.g. 401) — the token is invalid. Clear session.
+        setToken(null);
+        setUser(null);
+      });
+  }, [isDown, user]);
 
   const login = useCallback(
     async (email: string, password: string): Promise<void> => {
