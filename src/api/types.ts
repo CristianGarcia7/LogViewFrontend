@@ -152,3 +152,19 @@ export interface ReadinessDetailDto {
     aws: DependencyStatusDto;
   };
 }
+
+export interface InstanceDto {
+  instanceId: string;
+  computerName?: string;
+  pingStatus: string;
+}
+
+export type SystemLogType = 'nginx' | 'apache';
+
+export interface SystemLogsQueryParams {
+  instanceId: string;
+  logType: SystemLogType;
+  lastLines?: number;
+  text?: string;
+  level?: LogLevel;
+}
