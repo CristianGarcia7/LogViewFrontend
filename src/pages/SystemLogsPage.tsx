@@ -223,7 +223,7 @@ function SystemLogsPageContent() {
               {instances.length === 0 && <option value="">No instances</option>}
               {instances.map((instance) => (
                 <option key={instance.instanceId} value={instance.instanceId}>
-                  {instance.computerName ?? instance.instanceId}
+                  {instance.name ?? instance.computerName ?? instance.instanceId}
                 </option>
               ))}
             </select>

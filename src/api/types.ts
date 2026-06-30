@@ -156,6 +156,8 @@ export interface ReadinessDetailDto {
 export interface InstanceDto {
   instanceId: string;
   computerName?: string;
+  /** EC2 Name tag (e.g. "Flare - Websites - Production"); falls back to computerName. */
+  name?: string;
   pingStatus: string;
 }
 
