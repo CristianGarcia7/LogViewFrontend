@@ -41,12 +41,16 @@ export interface UserListResponseDto {
   take: number;
 }
 
+export type ProjectHealthStatus = 'ok' | 'warn' | 'error' | 'unknown';
+
 export interface ProjectListItemDto {
   id: string;
   name: string;
   domain: string;
   sourceType: string;
   lastSyncedAt?: string | null;
+  lastHealthStatus?: ProjectHealthStatus;
+  lastCheckedAt?: string | null;
 }
 
 export interface ProjectListResponseDto {
@@ -100,6 +104,15 @@ export interface SyncResultDto {
   created: number;
   updated: number;
   rejected: number;
+}
+
+export interface HealthSweepResultDto {
+  swept: number;
+  ok: number;
+  warn: number;
+  error: number;
+  skipped: boolean;
+  durationMs: number;
 }
 
 export interface SslInfoDto {

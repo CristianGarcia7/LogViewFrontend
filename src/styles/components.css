@@ -194,6 +194,12 @@
   border: 1px solid var(--semantic-error-border); /* --semantic-error-border: red 35% */
 }
 
+.health-pill--unknown {
+  background-color: var(--level-3);             /* --level-3: #131313 */
+  color: var(--level-3-text);                   /* --level-3-text: #8c8c8c */
+  border: 1px solid var(--white-5);             /* --white-5: subtle outline, mirrors .health-badge--neutral */
+}
+
 /* Badges — SSL and neutral states */
 .health-badge {
   display: inline-flex;
