@@ -13,8 +13,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <BackendStatusProvider>
-        <BackendStatusBanner />
         <AuthProvider>
+          <BackendStatusBanner />
           <ToastProvider>
             <Routes>
               {/* Public */}
