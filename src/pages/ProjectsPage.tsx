@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listProjects, syncProjects } from '../api/projects';
-import type { ProjectListItemDto, SyncResultDto } from '../api/types';
+import { listProjects, syncProjects, runHealthSweep } from '../api/projects';
+import type { ProjectListItemDto, SyncResultDto, ProjectHealthStatus } from '../api/types';
 import { AppHeader } from '../components/AppHeader';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorState } from '../components/ErrorState';
@@ -11,6 +11,21 @@ import { useAuth } from '../context/AuthContext';
 import './ProjectsPage.css';
 
 const PAGE_SIZE = 24;
+
+const HEALTH_PILL_LABEL: Record<ProjectHealthStatus, string> = {
+  ok: 'OK',
+  warn: 'WARN',
+  error: 'ERROR',
+  unknown: 'UNKNOWN',
+};
+
+function healthPillClass(status: ProjectHealthStatus | undefined): string {
+  return `health-pill health-pill--${status ?? 'unknown'}`;
+}
+
+function healthPillLabel(status: ProjectHealthStatus | undefined): string {
+  return HEALTH_PILL_LABEL[status ?? 'unknown'];
+}
 
 export function ProjectsPage() {
   const navigate = useNavigate();
@@ -29,6 +44,10 @@ export function ProjectsPage() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<SyncResultDto | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
+
+  const [isSweeping, setIsSweeping] = useState(false);
+  const [sweepNotice, setSweepNotice] = useState<string | null>(null);
+  const [sweepError, setSweepError] = useState<string | null>(null);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -107,6 +126,27 @@ export function ProjectsPage() {
     }
   };
 
+  const handleHealthSweep = async () => {
+    setIsSweeping(true);
+    setSweepError(null);
+    setSweepNotice(null);
+    try {
+      await runHealthSweep();
+      setRetryCount((n) => n + 1); // re-trigger the existing fetch effect
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 409) {
+        setSweepNotice('A status check is already in progress.');
+      } else if (axiosErr.response?.status === 403) {
+        setSweepError("You don't have permission to check status.");
+      } else {
+        setSweepError('Status check failed. Please try again.');
+      }
+    } finally {
+      setIsSweeping(false);
+    }
+  };
+
   // Show pagination once there is data or after the initial load finishes
   const showPagination = !error && !(isLoading && projects.length === 0);
 
@@ -146,6 +186,24 @@ export function ProjectsPage() {
               )}
             </div>
           )}
+          {isAdmin && (
+            <div className="projects-sync">
+              <button
+                className="op-button-ghost"
+                onClick={handleHealthSweep}
+                disabled={isSweeping}
+                aria-label="Check health status of all projects"
+              >
+                {isSweeping && <span className="projects-sync__spinner" aria-hidden="true" />}
+                {isSweeping ? 'Checking…' : 'Check status'}
+              </button>
+              {isSweeping && (
+                <p className="projects-sync__hint" role="status" aria-live="polite">
+                  Checking all projects… this can take up to a minute.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -173,6 +231,32 @@ export function ProjectsPage() {
             className="projects-sync-error__close"
             onClick={() => setSyncError(null)}
             aria-label="Dismiss sync error"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {sweepNotice && (
+        <div className="projects-sync-result" role="status" aria-live="polite">
+          <span>{sweepNotice}</span>
+          <button
+            className="projects-sync-result__close"
+            onClick={() => setSweepNotice(null)}
+            aria-label="Dismiss status check notice"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {sweepError && (
+        <div className="projects-sync-error" role="alert">
+          <span>{sweepError}</span>
+          <button
+            className="projects-sync-error__close"
+            onClick={() => setSweepError(null)}
+            aria-label="Dismiss status check error"
           >
             ×
           </button>
@@ -213,6 +297,9 @@ export function ProjectsPage() {
                     <Icon name="folder" size={18} />
                   </span>
                   <h4 className="project-card__name">{project.name}</h4>
+                  <span className={healthPillClass(project.lastHealthStatus)}>
+                    {healthPillLabel(project.lastHealthStatus)}
+                  </span>
                   <Icon
                     name="chevronRight"
                     size={16}
@@ -228,6 +315,13 @@ export function ProjectsPage() {
                     <Icon name="clock" size={12} />
                     Last synced{' '}
                     {new Date(project.lastSyncedAt).toLocaleDateString()}
+                  </p>
+                )}
+                {project.lastCheckedAt && (
+                  <p className="project-card__meta">
+                    <Icon name="clock" size={12} />
+                    Last checked{' '}
+                    {new Date(project.lastCheckedAt).toLocaleDateString()}
                   </p>
                 )}
               </button>

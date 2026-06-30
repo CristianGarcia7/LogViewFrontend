@@ -1,5 +1,11 @@
 import apiClient from './client';
-import type { ProjectListResponseDto, ProjectDto, SyncResultDto, HealthCheckResponseDto } from './types';
+import type {
+  ProjectListResponseDto,
+  ProjectDto,
+  SyncResultDto,
+  HealthCheckResponseDto,
+  HealthSweepResultDto,
+} from './types';
 
 export async function listProjects(
   params: { page?: number; pageSize?: number; search?: string } = {},
@@ -26,6 +32,18 @@ export async function syncProjects(): Promise<SyncResultDto> {
     undefined,
     { timeout: 120_000 }, // sync is synchronous and slow (~60s); allow up to 2 min
   );
+  return response.data;
+}
+
+export async function runHealthSweep(): Promise<HealthSweepResultDto> {
+  const response = await apiClient.post<HealthSweepResultDto>(
+    '/projects/health-sweep',
+    undefined,
+    { timeout: 120_000 }, // sweep is synchronous and slow (~48s); allow up to 2 min
+  );
+  // Caller is responsible for distinguishing a 409 (sweep already in flight,
+  // see ConflictException on the backend) from other errors via err.response?.status,
+  // mirroring how syncProjects() callers inspect status codes — no special handling here.
   return response.data;
 }
 
