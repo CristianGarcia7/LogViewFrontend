@@ -2,6 +2,11 @@
    ProjectHealthPanel — on-demand health + SSL indicator
    All values use var(--token); token source cited per line.
    Dark-first, Mulish. Animation gated behind prefers-reduced-motion.
+
+   NOTE: Shared pills/badges/spinner (.health-pill*, .health-badge*,
+   .health-spinner*, @keyframes health-spin) live in
+   src/styles/components.css so multiple health surfaces can reuse
+   them. This file holds only panel-layout rules.
    ============================================================ */
 
 /* ----------------------------------------------------------
@@ -17,76 +22,6 @@
   border: 1px solid var(--white-5);             /* --white-5: subtle outline */
   border-radius: var(--radius-12);              /* --radius-12: cards/containers */
   margin-bottom: var(--gap-16);                 /* --gap-16: 16px */
-}
-
-/* ----------------------------------------------------------
-   Pills — liveness status
-   ---------------------------------------------------------- */
-.health-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--gap-8);                    /* --gap-8: 8px horizontal */
-  border-radius: var(--radius-infinite);        /* --radius-infinite: pill shape */
-  font: var(--font-body-xs);                    /* --font-body-xs: 400 12px/14px Mulish */
-  font-family: var(--font-family);              /* --font-family: Mulish */
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.health-pill--ok {
-  background-color: var(--semantic-ok-bg);      /* --semantic-ok-bg: emerald 15% fill */
-  color: var(--semantic-ok-text);               /* --semantic-ok-text: #34d399 */
-  border: 1px solid var(--semantic-ok-border);  /* --semantic-ok-border: emerald 35% */
-}
-
-.health-pill--warn {
-  background-color: var(--semantic-warn-bg);    /* --semantic-warn-bg: amber 15% fill */
-  color: var(--semantic-warn-text);             /* --semantic-warn-text: #fbbf24 */
-  border: 1px solid var(--semantic-warn-border);/* --semantic-warn-border: amber 35% */
-}
-
-.health-pill--error {
-  background-color: var(--semantic-error-bg);   /* --semantic-error-bg: red 15% fill */
-  color: var(--semantic-error-text);            /* --semantic-error-text: #f87171 */
-  border: 1px solid var(--semantic-error-border); /* --semantic-error-border: red 35% */
-}
-
-/* ----------------------------------------------------------
-   Badges — SSL and neutral states
-   ---------------------------------------------------------- */
-.health-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--gap-8);                    /* --gap-8: 8px */
-  border-radius: var(--radius-8);               /* --radius-8: small badges */
-  font: var(--font-body-xs);                    /* --font-body-xs: 400 12px/14px Mulish */
-  font-family: var(--font-family);              /* --font-family: Mulish */
-  white-space: nowrap;
-}
-
-.health-badge--ok {
-  background-color: var(--semantic-ok-bg);      /* --semantic-ok-bg */
-  color: var(--semantic-ok-text);               /* --semantic-ok-text */
-  border: 1px solid var(--semantic-ok-border);  /* --semantic-ok-border */
-}
-
-.health-badge--warn {
-  background-color: var(--semantic-warn-bg);    /* --semantic-warn-bg */
-  color: var(--semantic-warn-text);             /* --semantic-warn-text */
-  border: 1px solid var(--semantic-warn-border);/* --semantic-warn-border */
-}
-
-.health-badge--error {
-  background-color: var(--semantic-error-bg);   /* --semantic-error-bg */
-  color: var(--semantic-error-text);            /* --semantic-error-text */
-  border: 1px solid var(--semantic-error-border); /* --semantic-error-border */
-}
-
-.health-badge--neutral {
-  background-color: var(--level-3);             /* --level-3: #131313 */
-  color: var(--level-3-text);                   /* --level-3-text: #8c8c8c */
-  border: 1px solid var(--white-5);             /* --white-5: subtle outline */
 }
 
 /* ----------------------------------------------------------
@@ -121,38 +56,4 @@
   gap: var(--gap-6);                            /* --gap-6: 6px */
   font-size: 11px;
   padding: 3px var(--gap-8);                    /* --gap-8: 8px */
-}
-
-/* ----------------------------------------------------------
-   Spinner — keyframe + .health-spinner class
-   ---------------------------------------------------------- */
-@keyframes health-spin {
-  to { transform: rotate(360deg); }
-}
-
-.health-spinner {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--white-15);            /* --white-15: rgba(255,255,255,0.15) track */
-  border-top-color: var(--level-2-text);        /* --level-2-text: #dcdcdc moving arc */
-  border-radius: var(--radius-infinite);        /* --radius-infinite: circle */
-  animation: health-spin var(--duration-story) linear infinite; /* --duration-story: 600ms */
-  flex-shrink: 0;
-}
-
-.health-spinner--btn {
-  width: 9px;
-  height: 9px;
-}
-
-/* ----------------------------------------------------------
-   Reduced motion — disable spin
-   ---------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  .health-spinner,
-  .health-spinner--btn {
-    animation: none;
-    opacity: 0.5;
-  }
 }

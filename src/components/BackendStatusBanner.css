@@ -1,0 +1,51 @@
+/* ============================================================
+   BackendStatusBanner — system-level alert overlay.
+   Intentionally overlays the sticky AppHeader (z-index: 10)
+   because this is a system alert, not a page-level element.
+   ============================================================ */
+
+.backend-status-banner {
+  /* Banner overlays the sticky header (z-index: 10) by design — system alert. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-8);
+  padding: var(--gap-8) var(--margin-desktop);
+
+  background-color: var(--semantic-error-bg);
+  border-bottom: 1px solid var(--semantic-error-border);
+  color: var(--semantic-error-text);
+  font: var(--font-body-small);
+
+  animation: banner-enter var(--duration-standard) var(--ease-premium) both;
+}
+
+/* Degraded (amber) variant — backend reachable but a dependency is down. */
+.backend-status-banner--warn {
+  background-color: var(--semantic-warn-bg);
+  border-bottom: 1px solid var(--semantic-warn-border);
+  color: var(--semantic-warn-text);
+}
+
+@keyframes banner-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backend-status-banner {
+    animation: none;
+  }
+}

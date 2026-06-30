@@ -35,6 +35,17 @@ export function AppHeader() {
                 Users
               </NavLink>
             )}
+            {user?.role === 'admin' && (
+              <NavLink
+                className={({ isActive }) =>
+                  `app-header__nav-link${isActive ? ' app-header__nav-link--active' : ''}`
+                }
+                to="/system-status"
+              >
+                <Icon name="shield" size={16} />
+                System Status
+              </NavLink>
+            )}
           </nav>
         </div>
 
