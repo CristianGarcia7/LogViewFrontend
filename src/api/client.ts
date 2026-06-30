@@ -5,6 +5,7 @@ import {
   getRefreshToken,
   setTokens,
 } from './tokens';
+import { networkErrorNotifier } from '../context/BackendStatusContext';
 
 // NOTE: Both the access token and the refresh token are stored in localStorage
 // and are XSS-exposed. Future hardening: use httpOnly cookies with a server-side
@@ -59,6 +60,10 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as typeof error.config & {
       _retry?: boolean;
     };
+
+    if (!error.response) {
+      networkErrorNotifier.current?.();
+    }
 
     if (error.response?.status !== 401) {
       return Promise.reject(error);

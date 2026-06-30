@@ -120,3 +120,8 @@ export interface HealthCheckResponseDto {
   secure: boolean;
   reason?: string | null;
 }
+
+export interface BackendHealthDto {
+  status: 'ok' | 'degraded' | 'down';
+  checkedAt: string;
+}
