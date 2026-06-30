@@ -1,0 +1,17 @@
+/* ============================================================
+   SystemLogsPage — admin system logs page.
+   Reuses LogViewPage's filter/output/log-line classes verbatim
+   (imported alongside this file); only the page title is unique.
+   ============================================================ */
+
+.system-logs-page__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-12);                          /* tokens.css — --gap-12 */
+  font: var(--font-h2);                        /* tokens.css — matches LogViewPage header weight */
+  color: var(--level-1-text);                  /* tokens.css — #f5f5f5 */
+}
+
+.system-logs-page__title svg {
+  color: var(--op-blue-400);                   /* tokens.css — brand accent */
+}

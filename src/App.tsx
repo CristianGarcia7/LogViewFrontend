@@ -9,6 +9,7 @@ import { LogViewPage } from './pages/LogViewPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { UsersPage } from './pages/UsersPage';
 import { SystemStatusPage } from './pages/SystemStatusPage';
+import { SystemLogsPage } from './pages/SystemLogsPage';
 
 export default function App() {
   return (
@@ -51,6 +52,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <SystemStatusPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/system-logs"
+                element={
+                  <ProtectedRoute>
+                    <SystemLogsPage />
                   </ProtectedRoute>
                 }
               />
