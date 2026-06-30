@@ -113,6 +113,17 @@ apiClient.interceptors.response.use(
       originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
       return apiClient(originalRequest);
     } catch (err) {
+      const axiosErr = err as { response?: unknown };
+      if (!axiosErr.response) {
+        // Network error — backend is unreachable. Do NOT destroy the session.
+        // The networkErrorNotifier already fired above (from the original request
+        // or will fire from the refresh attempt reaching the outer interceptor).
+        // Signal the banner and let the queued requests fail gracefully.
+        networkErrorNotifier.current?.();
+        processQueue(err as Error, null);
+        return Promise.reject(err);
+      }
+      // Genuine auth failure (e.g. refresh token revoked/expired) — log out.
       processQueue(err as Error, null);
       clearTokens();
       window.location.href = '/login';

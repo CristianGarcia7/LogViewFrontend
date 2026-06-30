@@ -44,8 +44,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(getAccessToken()); // may have been rotated by interceptor
         setUser(userData);
       })
-      .catch(() => {
-        // Token invalid and refresh also failed — interceptor already cleared tokens
+      .catch((error: unknown) => {
+        const axiosErr = error as { response?: unknown };
+        if (!axiosErr.response) {
+          // Network error on mount — backend is unreachable but the stored
+          // tokens are still valid. Keep the session intact; the backend
+          // status banner will surface the outage to the user.
+          setToken(getAccessToken());
+          // Leave user as null — it will be populated once backend recovers.
+          return;
+        }
+        // Genuine auth failure (401) — interceptor already cleared tokens.
         setToken(null);
         setUser(null);
       })
