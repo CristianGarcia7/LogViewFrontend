@@ -125,3 +125,17 @@ export interface BackendHealthDto {
   status: 'ok' | 'degraded' | 'down';
   checkedAt: string;
 }
+
+export interface DependencyStatusDto {
+  healthy: boolean;
+  reason?: string;
+}
+
+export interface ReadinessDetailDto {
+  status: 'ok' | 'degraded' | 'down';
+  checkedAt: string;
+  checks: {
+    database: DependencyStatusDto;
+    aws: DependencyStatusDto;
+  };
+}

@@ -1,0 +1,90 @@
+/* ============================================================
+   SystemHealthPanel — admin self-observability surface.
+   Layout only. Shared .health-pill*, .health-badge*, .health-spinner*
+   come from src/styles/components.css.
+   All values use var(--token); token source cited per line.
+   ============================================================ */
+
+.system-health {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);                            /* --gap-16: 16px */
+  background-color: var(--level-2);              /* --level-2: card bg */
+  border: 1px solid var(--white-5);              /* --white-5: subtle outline */
+  border-radius: var(--radius-12);               /* --radius-12: cards/containers */
+  padding: var(--card-p-md);                     /* --card-p-md: 24px */
+}
+
+/* ----------------------------------------------------------
+   Header — overall badge + checkedAt + re-check
+   ---------------------------------------------------------- */
+.system-health__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-12);                            /* --gap-12: 12px */
+}
+
+/* badge icon spacing (badge base has no gap) */
+.system-health__header .health-badge {
+  gap: var(--gap-6);                             /* --gap-6: 6px */
+}
+
+.system-health__checked {
+  font: var(--font-body-xs);                     /* --font-body-xs: 400 12px/14px Mulish */
+  font-family: var(--font-family);               /* --font-family: Mulish */
+  color: var(--level-4-text);                    /* --level-4-text: #6e6e6e muted */
+  white-space: nowrap;
+}
+
+.system-health__recheck {
+  margin-left: auto;                             /* push to trailing edge */
+  font-size: 11px;
+  padding: 3px var(--gap-8);                     /* --gap-8: 8px */
+}
+
+/* ----------------------------------------------------------
+   Loading state
+   ---------------------------------------------------------- */
+.system-health__loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-6);                             /* --gap-6: 6px */
+  font: var(--font-body-xs);                     /* --font-body-xs */
+  font-family: var(--font-family);
+  color: var(--level-4-text);                    /* --level-4-text: #6e6e6e */
+}
+
+/* ----------------------------------------------------------
+   Dependency rows
+   ---------------------------------------------------------- */
+.system-health__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-8);                             /* --gap-8: 8px */
+}
+
+.system-health__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-12);                            /* --gap-12: 12px */
+  padding: var(--card-p-sm) 0;                   /* --card-p-sm: 16px */
+  border-bottom: 1px solid var(--white-5);       /* --white-5: subtle divider */
+}
+
+.system-health__row:last-child {
+  border-bottom: none;
+}
+
+.system-health__row-label {
+  font: var(--font-body-regular);                /* --font-body-regular: 500 16px/18px Mulish */
+  color: var(--level-1-text);                    /* --level-1-text: #f5f5f5 */
+  min-width: 140px;
+}
+
+.system-health__row-reason {
+  font: var(--font-body-xs);                     /* --font-body-xs: 400 12px/14px Mulish */
+  font-family: var(--font-family);               /* --font-family: Mulish */
+  color: var(--level-4-text);                    /* --level-4-text: #6e6e6e muted */
+}

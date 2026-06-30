@@ -1,0 +1,42 @@
+/* ============================================================
+   SystemStatusPage — admin self-observability page.
+   Layout mirrors UsersPage; all values use var(--token).
+   ============================================================ */
+
+.system-status-page {
+  min-height: 100dvh;
+  background-color: var(--level-1);            /* tokens.css — canvas base */
+  display: flex;
+  flex-direction: column;
+}
+
+.system-status-main {
+  max-width: var(--container-wide);            /* tokens.css — aligns all pages */
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--container-p-spacious) var(--margin-desktop); /* tokens.css */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-32);                          /* tokens.css — utility gap */
+}
+
+.system-status-page__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-12);                          /* tokens.css — --gap-12 */
+  font: var(--font-h1);                        /* tokens.css — 700 48px/50px Mulish */
+  color: var(--level-1-text);                  /* tokens.css — #f5f5f5 */
+}
+
+.system-status-page__title svg {
+  color: var(--op-blue-400);                   /* tokens.css — brand accent */
+}
+
+/* ----------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+@media (max-width: 600px) {
+  .system-status-main {
+    padding: var(--container-p-default) var(--container-p-compact); /* tokens.css */
+  }
+}

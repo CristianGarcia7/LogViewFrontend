@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { LogViewPage } from './pages/LogViewPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { UsersPage } from './pages/UsersPage';
+import { SystemStatusPage } from './pages/SystemStatusPage';
 
 export default function App() {
   return (
@@ -42,6 +43,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <UsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/system-status"
+                element={
+                  <ProtectedRoute>
+                    <SystemStatusPage />
                   </ProtectedRoute>
                 }
               />
